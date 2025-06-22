@@ -286,6 +286,26 @@
             font-weight: 600;
             font-size: 0.9em;
         }
+        
+        .settings-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .settings-btn:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
@@ -308,8 +328,10 @@
                         <div class="stat-label">Персонажей</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" id="accountAge">0</div>
-                        <div class="stat-label">Дней в проекте</div>
+                        <button id="settingsBtn" class="settings-btn">
+                            <i class="fas fa-cog"></i>
+                            Настройки
+                        </button>
                     </div>
                 </div>
                 <div class="profile-actions">
@@ -400,6 +422,33 @@
         </div>
     </div>
 
+    <!-- Модальное окно настроек профиля -->
+    <div id="settingsModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeSettings">&times;</span>
+            <h2>Настройки профиля</h2>
+            
+            <div class="form-section">
+                <h3>Основная информация</h3>
+                <input type="text" id="userDisplayName" placeholder="Имя пользователя">
+                <p style="font-size: 0.9em; color: var(--text-secondary); margin-bottom: 15px;">
+                    Оставьте пустым, чтобы использовать email
+                </p>
+            </div>
+
+            <div class="form-section">
+                <h3>Аватарка</h3>
+                <input type="file" id="userAvatar" accept="image/*">
+                <p style="font-size: 0.9em; color: var(--text-secondary); margin-bottom: 15px;">
+                    Выберите новую аватарку (необязательно)
+                </p>
+            </div>
+
+            <button id="saveSettingsBtn">Сохранить изменения</button>
+            <p id="settingsError" style="color:red;"></p>
+        </div>
+    </div>
+
     <!-- Firebase -->
     <script src="firebase/firebase-app-compat.js"></script>
     <script src="firebase/firebase-auth-compat.js"></script>
@@ -439,10 +488,6 @@
         function loadProfileData(user) {
             document.getElementById('profileName').textContent = user.displayName || user.email.split('@')[0];
             document.getElementById('profileEmail').textContent = user.email;
-            
-            // Вычисляем возраст аккаунта
-            const accountAge = Math.floor((Date.now() - user.metadata.creationTime) / (1000 * 60 * 60 * 24));
-            document.getElementById('accountAge').textContent = accountAge;
         }
         
         // Загружаем персонажей пользователя
@@ -544,9 +589,6 @@
                             <a href="character.html?id=${character.id}" class="view-btn">
                                 <i class="fas fa-eye"></i> Подробнее
                             </a>
-                            <button class="edit-btn" onclick="editCharacter('${character.id}')">
-                                <i class="fas fa-edit"></i> Редактировать
-                            </button>
                             <button class="delete-btn" onclick="deleteCharacter('${character.id}', '${character.name}')">
                                 <i class="fas fa-trash"></i> Удалить
                             </button>
@@ -733,6 +775,84 @@
             debugBtn.onclick = debugAllCharacters;
             document.body.appendChild(debugBtn);
         });
+        
+        // Модальное окно настроек профиля
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const closeSettings = document.getElementById('closeSettings');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        
+        // Открытие модального окна настроек
+        if (settingsBtn) {
+            settingsBtn.addEventListener('click', function() {
+                // Заполняем форму текущими данными
+                const user = firebase.auth().currentUser;
+                document.getElementById('userDisplayName').value = user.displayName || '';
+                settingsModal.style.display = 'flex';
+            });
+        }
+        
+        // Закрытие модального окна настроек
+        if (closeSettings) {
+            closeSettings.addEventListener('click', function() {
+                settingsModal.style.display = 'none';
+                document.getElementById('settingsError').textContent = '';
+            });
+        }
+        
+        // Клик вне модального окна настроек
+        window.addEventListener('click', function(event) {
+            if (event.target === settingsModal) {
+                settingsModal.style.display = 'none';
+                document.getElementById('settingsError').textContent = '';
+            }
+        });
+        
+        // Сохранение настроек профиля
+        if (saveSettingsBtn) {
+            saveSettingsBtn.addEventListener('click', async function() {
+                const errorEl = document.getElementById('settingsError');
+                errorEl.textContent = '';
+                
+                try {
+                    const user = firebase.auth().currentUser;
+                    const displayName = document.getElementById('userDisplayName').value.trim();
+                    const avatarFile = document.getElementById('userAvatar').files[0];
+                    
+                    // Показываем индикатор загрузки
+                    saveSettingsBtn.textContent = 'Сохранение...';
+                    saveSettingsBtn.disabled = true;
+                    
+                    // Обновляем displayName если изменился
+                    if (displayName !== user.displayName) {
+                        await user.updateProfile({
+                            displayName: displayName || null
+                        });
+                    }
+                    
+                    // Обновляем аватарку если выбрана
+                    if (avatarFile) {
+                        const avatarUrl = await uploadImageToImgBB(avatarFile);
+                        await user.updateProfile({
+                            photoURL: avatarUrl
+                        });
+                    }
+                    
+                    // Обновляем отображение в профиле
+                    document.getElementById('profileName').textContent = displayName || user.email.split('@')[0];
+                    
+                    alert('Настройки профиля успешно сохранены!');
+                    settingsModal.style.display = 'none';
+                    
+                } catch (e) {
+                    console.error('Ошибка сохранения настроек:', e);
+                    errorEl.textContent = e.message;
+                } finally {
+                    saveSettingsBtn.textContent = 'Сохранить изменения';
+                    saveSettingsBtn.disabled = false;
+                }
+            });
+        }
     </script>
 </body>
 </html> 

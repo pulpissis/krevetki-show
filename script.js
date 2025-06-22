@@ -38,13 +38,10 @@ function createCharacterCard(character) {
         <small>Автор: ${character.authorEmail}</small>
       </div>
       <div class="card-actions">
-        <button class="view-btn" onclick="viewCharacter('${character.id}')">
+        <button class="view-btn" onclick="event.stopPropagation(); viewCharacter('${character.id}')">
           <i class="fas fa-eye"></i> Подробнее
         </button>
         ${canEdit ? `
-        <button class="edit-btn" onclick="event.stopPropagation(); editCharacter('${character.id}')">
-          <i class="fas fa-edit"></i> Редактировать
-        </button>
         <button class="delete-btn" onclick="event.stopPropagation(); deleteCharacter('${character.id}', '${character.name}')">
           <i class="fas fa-trash"></i> Удалить
         </button>

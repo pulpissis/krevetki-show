@@ -168,9 +168,6 @@ function renderCharacterDetail(character) {
                 
                 ${canEdit ? `
                 <div class="character-actions">
-                    <button class="edit-btn" onclick="editCharacter('${character.id}')">
-                        <i class="fas fa-edit"></i> Редактировать
-                    </button>
                     <button class="delete-btn" onclick="deleteCharacter('${character.id}', '${character.name}')">
                         <i class="fas fa-trash"></i> Удалить
                     </button>
