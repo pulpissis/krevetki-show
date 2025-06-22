@@ -1500,7 +1500,7 @@ body::before { display: none !important; }
 }
 
 .gallery-main-image {
-    max-width: 30%;
+    max-width: 40%;
     max-height: 20vh;
     width: auto;
     height: auto;
