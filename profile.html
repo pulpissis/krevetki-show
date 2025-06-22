@@ -317,7 +317,7 @@
     <div class="profile-page">
         <div class="profile-header">
             <div class="profile-avatar">
-                <i class="fas fa-user-circle"></i>
+                <i class="fas fa-user"></i>
             </div>
             <div class="profile-info">
                 <h1 id="profileName">Загрузка...</h1>
@@ -352,6 +352,9 @@
             <div style="text-align: center; margin-bottom: 20px;">
                 <button onclick="refreshCharacters()" style="padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">
                     <i class="fas fa-sync-alt"></i> Обновить список
+                </button>
+                <button onclick="updateExistingCharacters()" style="padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em; margin-left: 10px;">
+                    <i class="fas fa-database"></i> Обновить имена авторов
                 </button>
             </div>
             <div id="userCharactersList">
@@ -589,6 +592,9 @@
                             <a href="character.html?id=${character.id}" class="view-btn">
                                 <i class="fas fa-eye"></i> Подробнее
                             </a>
+                            <button class="edit-btn" onclick="editCharacter('${character.id}')">
+                                <i class="fas fa-edit"></i> Редактировать
+                            </button>
                             <button class="delete-btn" onclick="deleteCharacter('${character.id}', '${character.name}')">
                                 <i class="fas fa-trash"></i> Удалить
                             </button>
@@ -737,6 +743,41 @@
 
         function refreshCharacters() {
             loadUserCharacters(firebase.auth().currentUser.uid);
+        }
+        
+        // Функция для обновления существующих персонажей (добавление authorName)
+        async function updateExistingCharacters() {
+            if (typeof firebase === 'undefined') {
+                alert('Firebase не загружен');
+                return;
+            }
+            
+            try {
+                const charactersSnapshot = await firebase.firestore().collection('characters').get();
+                let updatedCount = 0;
+                
+                for (const doc of charactersSnapshot.docs) {
+                    const character = doc.data();
+                    
+                    // Если у персонажа нет authorName, добавляем его
+                    if (!character.authorName && character.authorEmail) {
+                        const authorName = character.authorEmail.split('@')[0];
+                        await firebase.firestore().collection('characters').doc(doc.id).update({
+                            authorName: authorName
+                        });
+                        updatedCount++;
+                    }
+                }
+                
+                alert(`Обновлено персонажей: ${updatedCount}`);
+                
+                // Перезагружаем список персонажей
+                loadUserCharacters(firebase.auth().currentUser.uid);
+                
+            } catch (e) {
+                console.error('Ошибка при обновлении персонажей:', e);
+                alert('Ошибка при обновлении персонажей: ' + e.message);
+            }
         }
         
         // Модальное окно настроек профиля

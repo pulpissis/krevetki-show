@@ -42,6 +42,9 @@ function createCharacterCard(character) {
           <i class="fas fa-eye"></i> Подробнее
         </button>
         ${canEdit ? `
+        <button class="edit-btn" onclick="event.stopPropagation(); editCharacter('${character.id}')">
+          <i class="fas fa-edit"></i> Редактировать
+        </button>
         <button class="delete-btn" onclick="event.stopPropagation(); deleteCharacter('${character.id}', '${character.name}')">
           <i class="fas fa-trash"></i> Удалить
         </button>
@@ -768,6 +771,41 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (e) {
             console.error('Ошибка при получении пользователей:', e);
             alert('Ошибка при получении пользователей: ' + e.message);
+        }
+    };
+
+    // Функция для обновления существующих персонажей (добавление authorName)
+    window.updateExistingCharacters = async function() {
+        if (typeof firebase === 'undefined') {
+            alert('Firebase не загружен');
+            return;
+        }
+        
+        try {
+            const charactersSnapshot = await firebase.firestore().collection('characters').get();
+            let updatedCount = 0;
+            
+            for (const doc of charactersSnapshot.docs) {
+                const character = doc.data();
+                
+                // Если у персонажа нет authorName, добавляем его
+                if (!character.authorName && character.authorEmail) {
+                    const authorName = character.authorEmail.split('@')[0];
+                    await firebase.firestore().collection('characters').doc(doc.id).update({
+                        authorName: authorName
+                    });
+                    updatedCount++;
+                }
+            }
+            
+            alert(`Обновлено персонажей: ${updatedCount}`);
+            
+            // Перезагружаем галерею
+            loadCharacters();
+            
+        } catch (e) {
+            console.error('Ошибка при обновлении персонажей:', e);
+            alert('Ошибка при обновлении персонажей: ' + e.message);
         }
     };
 });
