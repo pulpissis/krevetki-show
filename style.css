@@ -1493,7 +1493,7 @@ body::before { display: none !important; }
 }
 
 .gallery-main-image {
-    max-width: 350px;
+    max-width: 450px;
     max-height: 350px;
     width: auto;
     height: auto;
