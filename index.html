@@ -93,25 +93,16 @@
         </footer>
     </div>
     <!-- Firebase и скрипты -->
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-    
-    <!-- Альтернативные CDN на случай блокировки основного -->
-    <script>
-        if (typeof firebase === 'undefined') {
-            document.write('<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/dist/firebase-app-compat.js"><\/script>');
-            document.write('<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/dist/firebase-auth-compat.js"><\/script>');
-            document.write('<script src="https://cdn.jsdelivr.net/npm/firebase@10.12.2/dist/firebase-firestore-compat.js"><\/script>');
-        }
-    </script>
+    <script src="firebase/firebase-app-compat.js"></script>
+    <script src="firebase/firebase-auth-compat.js"></script>
+    <script src="firebase/firebase-firestore-compat.js"></script>
     
     <script>
       // Проверяем, загрузился ли Firebase
       function checkFirebase() {
         if (typeof firebase === 'undefined') {
           console.error('Firebase не загружен!');
-          alert('Ошибка загрузки Firebase. Попробуйте обновить страницу или использовать VPN.');
+          alert('Ошибка загрузки Firebase. Проверьте, что файлы firebase загружены в папку firebase/');
           return false;
         }
         return true;
@@ -133,7 +124,7 @@
           console.log('Firebase успешно инициализирован');
         } catch (error) {
           console.error('Ошибка инициализации Firebase:', error);
-          alert('Ошибка инициализации Firebase. Попробуйте обновить страницу.');
+          alert('Ошибка инициализации Firebase. Проверьте конфигурацию.');
         }
       }
     </script>
