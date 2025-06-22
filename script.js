@@ -3,6 +3,16 @@ const characters = [];
 // Получаем элементы интерфейса
 const searchInput = document.querySelector('.search-input');
 
+// Проверяем, загружен ли Firebase
+function checkFirebaseLoaded() {
+    if (typeof firebase === 'undefined') {
+        console.error('Firebase не загружен!');
+        alert('Ошибка загрузки Firebase. Попробуйте обновить страницу или использовать VPN.');
+        return false;
+    }
+    return true;
+}
+
 function createCharacterCard(character) {
     const card = document.createElement('div');
     card.className = 'character-card-container';
@@ -14,11 +24,14 @@ function createCharacterCard(character) {
     if (character.romance) skills.push(`романтический интерес <${character.romance}>`);
 
     // Проверяем права на редактирование/удаление
-    const currentUser = firebase.auth().currentUser;
-    const canEdit = currentUser && (
-        currentUser.uid === character.authorId || 
-        window.currentUserRole === 'admin'
-    );
+    let canEdit = false;
+    if (checkFirebaseLoaded()) {
+        const currentUser = firebase.auth().currentUser;
+        canEdit = currentUser && (
+            currentUser.uid === character.authorId || 
+            window.currentUserRole === 'admin'
+        );
+    }
 
     // Транслитерация кириллицы → латиница
     const filename = character.name
@@ -90,6 +103,12 @@ function renderGallery(data) {
 
 // Заглушки для будущей функциональности
 document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем, загружен ли Firebase перед инициализацией
+    if (!checkFirebaseLoaded()) {
+        console.error('Firebase не загружен, некоторые функции будут недоступны');
+        return;
+    }
+    
     // Случайный персонаж
     const randomBtn = document.querySelector('.random-btn');
     randomBtn?.addEventListener('click', function() {
@@ -139,6 +158,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerSubmit = document.getElementById('registerSubmit');
     if (registerSubmit) {
         registerSubmit.onclick = async function() {
+            if (!checkFirebaseLoaded()) return;
+            
             const email = document.getElementById('registerEmail').value.trim();
             const username = document.getElementById('registerUsername').value.trim();
             const password = document.getElementById('registerPassword').value;
@@ -173,6 +194,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginSubmit = document.getElementById('loginSubmit');
     if (loginSubmit) {
         loginSubmit.onclick = async function() {
+            if (!checkFirebaseLoaded()) return;
+            
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const errorEl = document.getElementById('loginError');
@@ -219,7 +242,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Получение роли пользователя ---
     window.currentUserRole = null;
     async function fetchUserRole(user) {
-        if (!user) { window.currentUserRole = null; return; }
+        if (!user || !checkFirebaseLoaded()) { window.currentUserRole = null; return; }
         try {
             const doc = await firebase.firestore().collection('users').doc(user.uid).get();
             if (doc.exists) {
@@ -231,14 +254,19 @@ document.addEventListener('DOMContentLoaded', function() {
             window.currentUserRole = 'user';
         }
     }
-    firebase.auth().onAuthStateChanged(async function(user) {
-        updateAuthUI(user);
-        await fetchUserRole(user);
-        // Можно добавить: console.log('Ваша роль:', window.currentUserRole);
-    });
+    
+    if (checkFirebaseLoaded()) {
+        firebase.auth().onAuthStateChanged(async function(user) {
+            updateAuthUI(user);
+            await fetchUserRole(user);
+            // Можно добавить: console.log('Ваша роль:', window.currentUserRole);
+        });
+    }
+    
     // Кнопка выхода
     if (logoutBtn) {
         logoutBtn.onclick = async function() {
+            if (!checkFirebaseLoaded()) return;
             await firebase.auth().signOut();
             alert('Вы вышли из аккаунта');
         };
@@ -252,6 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Открытие модалки добавления персонажа
     if (addCharacterBtn) {
         addCharacterBtn.onclick = () => {
+            if (!checkFirebaseLoaded()) return;
             if (!firebase.auth().currentUser) {
                 alert('Сначала войдите в аккаунт!');
                 return;
@@ -308,6 +337,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const addCharacterSubmit = document.getElementById('addCharacterSubmit');
     if (addCharacterSubmit) {
         addCharacterSubmit.onclick = async function() {
+            if (!checkFirebaseLoaded()) return;
+            
             const errorEl = document.getElementById('addCharacterError');
             errorEl.textContent = '';
             
@@ -412,7 +443,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Обновляем функцию загрузки персонажей
     async function loadCharacters(loadMore = false) {
-        if (isLoading) return;
+        if (isLoading || !checkFirebaseLoaded()) return;
         
         try {
             isLoading = true;
@@ -651,6 +682,8 @@ document.head.appendChild(style);
 
 // Глобальные функции для редактирования и удаления персонажей
 window.editCharacter = async function(characterId) {
+    if (!checkFirebaseLoaded()) return;
+    
     try {
         // Получаем данные персонажа
         const doc = await firebase.firestore().collection('characters').doc(characterId).get();
@@ -693,6 +726,8 @@ window.editCharacter = async function(characterId) {
 };
 
 window.deleteCharacter = async function(characterId, characterName) {
+    if (!checkFirebaseLoaded()) return;
+    
     try {
         // Получаем данные персонажа для проверки прав
         const doc = await firebase.firestore().collection('characters').doc(characterId).get();
