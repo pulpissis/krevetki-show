@@ -49,7 +49,6 @@
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>Загрузка персонажа...</p>
-                <p id="debugInfo" style="font-size: 0.8em; color: #666;"></p>
             </div>
         </div>
     </div>
@@ -117,25 +116,9 @@
     </footer>
 
     <script>
-        // Простая отладочная информация
-        console.log('Страница character.html загружена');
-        console.log('URL:', window.location.href);
-        console.log('URL параметры:', window.location.search);
-        
         // Получаем ID персонажа из URL
         const urlParams = new URLSearchParams(window.location.search);
         const characterId = urlParams.get('id');
-        console.log('ID персонажа из URL:', characterId);
-        
-        // Показываем отладочную информацию на странице
-        const debugInfo = document.getElementById('debugInfo');
-        if (debugInfo) {
-            debugInfo.innerHTML = `
-                URL: ${window.location.href}<br>
-                ID персонажа: ${characterId || 'не найден'}<br>
-                Firebase: ${typeof firebase !== 'undefined' ? 'загружен' : 'не загружен'}
-            `;
-        }
         
         // Простая функция возврата
         function goBack() {

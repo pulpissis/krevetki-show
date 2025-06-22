@@ -35,7 +35,7 @@ function createCharacterCard(character) {
         </ul>
       </div>
       <div class="character-author">
-        <small>Автор: ${character.authorEmail}</small>
+        <small>Автор: ${character.authorName || character.authorEmail}</small>
       </div>
       <div class="card-actions">
         <button class="view-btn" onclick="event.stopPropagation(); viewCharacter('${character.id}')">
@@ -448,7 +448,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     age: age || '',
                     romance: romance || '',
                     authorId: firebase.auth().currentUser.uid,
-                    authorEmail: firebase.auth().currentUser.email
+                    authorEmail: firebase.auth().currentUser.email,
+                    authorName: firebase.auth().currentUser.displayName || firebase.auth().currentUser.email.split('@')[0]
                 };
 
                 // Добавляем новые URL изображений, если они есть
@@ -639,9 +640,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 break;
             case 'author':
                 charactersToSort.sort((a, b) => {
+                    const authorA = a.authorName || a.authorEmail;
+                    const authorB = b.authorName || b.authorEmail;
                     return isAscending ? 
-                        b.authorEmail.localeCompare(a.authorEmail) : 
-                        a.authorEmail.localeCompare(b.authorEmail);
+                        authorB.localeCompare(authorA) : 
+                        authorA.localeCompare(authorB);
                 });
                 break;
             case 'date':

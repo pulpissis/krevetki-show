@@ -709,6 +709,7 @@
                         artUrl: artUrl,
                         authorId: firebase.auth().currentUser.uid,
                         authorEmail: firebase.auth().currentUser.email,
+                        authorName: firebase.auth().currentUser.displayName || firebase.auth().currentUser.email.split('@')[0],
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
 
@@ -737,44 +738,6 @@
         function refreshCharacters() {
             loadUserCharacters(firebase.auth().currentUser.uid);
         }
-        
-        // Функция для отладки - показывает все персонажи в базе
-        async function debugAllCharacters() {
-            try {
-                console.log('Отладка: загружаем всех персонажей...');
-                const snapshot = await firebase.firestore().collection('characters').get();
-                console.log('Всего персонажей в базе:', snapshot.size);
-                
-                const currentUser = firebase.auth().currentUser;
-                console.log('Текущий пользователь:', currentUser.email, 'UID:', currentUser.uid);
-                
-                snapshot.forEach(doc => {
-                    const data = doc.data();
-                    console.log('Персонаж:', {
-                        id: doc.id,
-                        name: data.name,
-                        authorId: data.authorId,
-                        authorEmail: data.authorEmail,
-                        isMine: data.authorId === currentUser.uid
-                    });
-                });
-                
-                alert(`Отладка завершена!\nВсего персонажей: ${snapshot.size}\nВаш UID: ${currentUser.uid}\nСмотрите консоль для подробностей.`);
-                
-            } catch (error) {
-                console.error('Ошибка отладки:', error);
-                alert('Ошибка отладки: ' + error.message);
-            }
-        }
-        
-        // Добавляем кнопку отладки (временно)
-        document.addEventListener('DOMContentLoaded', function() {
-            const debugBtn = document.createElement('button');
-            debugBtn.textContent = 'Отладка';
-            debugBtn.style.cssText = 'position: fixed; top: 80px; left: 20px; z-index: 10000; background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;';
-            debugBtn.onclick = debugAllCharacters;
-            document.body.appendChild(debugBtn);
-        });
         
         // Модальное окно настроек профиля
         const settingsBtn = document.getElementById('settingsBtn');
