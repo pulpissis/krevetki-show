@@ -1193,6 +1193,7 @@ body::before { display: none !important; }
     box-shadow: var(--shadow);
     transition: transform 0.3s ease;
     cursor: pointer;
+    position: relative;
 }
 
 .art-item:hover {
@@ -1208,6 +1209,7 @@ body::before { display: none !important; }
 
 .art-info {
     padding: 15px;
+    position: relative;
 }
 
 .art-title {
@@ -1228,6 +1230,43 @@ body::before { display: none !important; }
     font-size: 0.8em;
     font-style: italic;
     margin-top: 8px;
+}
+
+/* Кнопка удаления арта */
+.delete-art-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    opacity: 0;
+    transform: scale(0.8);
+}
+
+.art-item:hover .delete-art-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.delete-art-btn:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.delete-art-btn:active {
+    transform: scale(0.95);
 }
 
 /* Стили для модального окна загрузки артов */

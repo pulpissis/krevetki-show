@@ -160,7 +160,7 @@ function renderCharacterDetail(character) {
     `;
 }
 
-// Рендеринг галереи артов
+// Рендеринг галереи артов с кнопками удаления
 function renderArtsGallery() {
     const currentUser = firebase.auth().currentUser;
     const canUpload = currentUser && (
@@ -173,16 +173,28 @@ function renderArtsGallery() {
     if (characterArts.length > 0) {
         artsHTML = `
             <div class="arts-grid">
-                ${characterArts.map((art, index) => `
-                    <div class="art-item" onclick="openGallery(${index + 2})">
-                        <img src="${art.imageUrl}" alt="${art.title}" class="art-image">
-                        <div class="art-info">
-                            <div class="art-title">${art.title}</div>
-                            ${art.description ? `<div class="art-description">${art.description}</div>` : ''}
-                            <div class="art-author">${art.authorName || art.authorEmail}</div>
+                ${characterArts.map((art, index) => {
+                    const canDelete = currentUser && (
+                        currentUser.uid === art.authorId || 
+                        currentUserRole === 'admin'
+                    );
+                    
+                    return `
+                        <div class="art-item" onclick="openGallery(${index + 2})">
+                            <img src="${art.imageUrl}" alt="${art.title}" class="art-image">
+                            <div class="art-info">
+                                <div class="art-title">${art.title}</div>
+                                ${art.description ? `<div class="art-description">${art.description}</div>` : ''}
+                                <div class="art-author">${art.authorName || art.authorEmail}</div>
+                                ${canDelete ? `
+                                    <button class="delete-art-btn" onclick="event.stopPropagation(); deleteArt('${art.id}', '${art.title}')" title="Удалить арт">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
-                    </div>
-                `).join('')}
+                    `;
+                }).join('')}
             </div>
         `;
     } else {
@@ -540,12 +552,66 @@ window.deleteCharacter = async function(characterId, characterName) {
     }
 };
 
+// Функция удаления арта
+async function deleteArt(artId, artTitle) {
+    if (!currentCharacter) {
+        alert('Персонаж не загружен');
+        return;
+    }
+    
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+        alert('Необходимо войти в систему для удаления артов');
+        return;
+    }
+    
+    // Находим арт для проверки прав
+    const art = characterArts.find(a => a.id === artId);
+    if (!art) {
+        alert('Арт не найден');
+        return;
+    }
+    
+    // Проверяем права на удаление
+    if (currentUser.uid !== art.authorId && currentUserRole !== 'admin') {
+        alert('У вас нет прав для удаления этого арта');
+        return;
+    }
+    
+    // Подтверждение удаления
+    const confirmDelete = confirm(`Вы уверены, что хотите удалить арт "${artTitle}"?`);
+    if (!confirmDelete) {
+        return;
+    }
+    
+    try {
+        // Удаляем арт из Firestore
+        await firebase.firestore()
+            .collection('characters')
+            .doc(currentCharacter.id)
+            .collection('arts')
+            .doc(artId)
+            .delete();
+        
+        // Обновляем галерею
+        await loadCharacterArts(currentCharacter.id);
+        renderCharacterDetail(currentCharacter);
+        
+        alert('Арт успешно удален!');
+        
+    } catch (error) {
+        console.error('Ошибка удаления арта:', error);
+        alert('Ошибка удаления арта: ' + error.message);
+    }
+}
+
 // Глобальные функции для модальных окон
 window.openUploadModal = openUploadModal;
 window.closeUploadModal = closeUploadModal;
 window.openGallery = openGallery;
 window.closeGalleryModal = closeGalleryModal;
 window.goToImage = goToImage;
+window.deleteArt = deleteArt;
 
 // Закрытие модальных окон при клике вне их
 window.onclick = function(event) {
