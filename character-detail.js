@@ -450,6 +450,22 @@ function closeGalleryModal() {
     }
 }
 
+// Рендеринг миниатюр
+function renderGalleryThumbnails(allImages) {
+    console.log('Рендеринг миниатюр галереи');
+    
+    const thumbnailsContainer = document.getElementById('galleryThumbnails');
+    
+    thumbnailsContainer.innerHTML = allImages.map((image, index) => `
+        <img src="${image.url}" 
+             alt="${image.title}" 
+             class="gallery-thumbnail ${index === currentImageIndex ? 'active' : ''}"
+             onclick="goToImage(${index})">
+    `).join('');
+    
+    console.log('Миниатюры галереи отрендерены');
+}
+
 // Обновление основного изображения в галерее
 function updateGalleryView(allImages) {
     console.log('Обновление вида галереи, индекс:', currentImageIndex);
@@ -466,29 +482,13 @@ function updateGalleryView(allImages) {
     }
 
     // Обновляем состояние кнопок навигации
-    const prevBtn = document.querySelector('.gallery-nav.prev');
-    const nextBtn = document.querySelector('.gallery-nav.next');
+    const prevBtn = document.querySelector('.gallery-nav-btn.prev');
+    const nextBtn = document.querySelector('.gallery-nav-btn.next');
     
     prevBtn.disabled = currentImageIndex <= 0;
     nextBtn.disabled = currentImageIndex >= allImages.length - 1;
     
     console.log('Вид галереи обновлен');
-}
-
-// Рендеринг миниатюр
-function renderGalleryThumbnails(allImages) {
-    console.log('Рендеринг миниатюр галереи');
-    
-    const thumbnailsContainer = document.getElementById('galleryThumbnails');
-    
-    thumbnailsContainer.innerHTML = allImages.map((image, index) => `
-        <img src="${image.url}" 
-             alt="${image.title}" 
-             class="thumbnail ${index === currentImageIndex ? 'active' : ''}"
-             onclick="goToImage(${index})">
-    `).join('');
-    
-    console.log('Миниатюры галереи отрендерены');
 }
 
 // Переход к изображению
