@@ -102,13 +102,7 @@
                 <button class="gallery-close" onclick="closeGalleryModal()">&times;</button>
             </div>
             <div class="gallery-body">
-                <button class="gallery-nav-btn prev" onclick="previousImage()">
-                    <i class="fas fa-chevron-left"></i>
-                </button>
                 <img id="galleryMainImage" class="gallery-main-image" src="" alt="">
-                <button class="gallery-nav-btn next" onclick="nextImage()">
-                    <i class="fas fa-chevron-right"></i>
-                </button>
             </div>
             <div class="gallery-info">
                 <h3 id="galleryImageTitle"></h3>
@@ -170,13 +164,12 @@
                 title.textContent = image.title;
                 description.textContent = image.description;
             }
-            
-            // Обновляем состояние кнопок навигации
-            const prevBtn = document.querySelector('.gallery-nav-btn.prev');
-            const nextBtn = document.querySelector('.gallery-nav-btn.next');
-            
-            prevBtn.disabled = currentImageIndex <= 0;
-            nextBtn.disabled = currentImageIndex >= testImages.length - 1;
+        }
+        
+        function goToImage(index) {
+            currentImageIndex = index;
+            updateGalleryView();
+            renderGalleryThumbnails();
         }
         
         function renderGalleryThumbnails() {
@@ -188,28 +181,6 @@
                      class="gallery-thumbnail ${index === currentImageIndex ? 'active' : ''}"
                      onclick="goToImage(${index})">
             `).join('');
-        }
-        
-        function goToImage(index) {
-            currentImageIndex = index;
-            updateGalleryView();
-            renderGalleryThumbnails();
-        }
-        
-        function nextImage() {
-            if (currentImageIndex < testImages.length - 1) {
-                currentImageIndex++;
-                updateGalleryView();
-                renderGalleryThumbnails();
-            }
-        }
-        
-        function previousImage() {
-            if (currentImageIndex > 0) {
-                currentImageIndex--;
-                updateGalleryView();
-                renderGalleryThumbnails();
-            }
         }
         
         // Закрытие модального окна при клике вне его

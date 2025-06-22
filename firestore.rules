@@ -1,0 +1,50 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Правила для коллекции пользователей
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Правила для коллекции персонажей
+    match /characters/{characterId} {
+      // Чтение персонажей разрешено всем авторизованным пользователям
+      allow read: if request.auth != null;
+      
+      // Создание персонажей разрешено авторизованным пользователям
+      allow create: if request.auth != null && 
+        request.resource.data.authorId == request.auth.uid;
+      
+      // Обновление персонажей разрешено автору или админу
+      allow update: if request.auth != null && 
+        (resource.data.authorId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      // Удаление персонажей разрешено автору или админу
+      allow delete: if request.auth != null && 
+        (resource.data.authorId == request.auth.uid || 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      
+      // Правила для подколлекции артов
+      match /arts/{artId} {
+        // Чтение артов разрешено всем авторизованным пользователям
+        allow read: if request.auth != null;
+        
+        // Создание артов разрешено автору персонажа или админу
+        allow create: if request.auth != null && 
+          (get(/databases/$(database)/documents/characters/$(characterId)).data.authorId == request.auth.uid ||
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+        
+        // Обновление артов разрешено автору арта или админу
+        allow update: if request.auth != null && 
+          (resource.data.authorId == request.auth.uid || 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+        
+        // Удаление артов разрешено автору арта или админу
+        allow delete: if request.auth != null && 
+          (resource.data.authorId == request.auth.uid || 
+           get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+      }
+    }
+  }
+} 

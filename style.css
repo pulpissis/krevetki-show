@@ -1442,20 +1442,6 @@ body::before { display: none !important; }
         max-height: 70vh;
     }
     
-    .gallery-nav-btn {
-        width: 40px;
-        height: 80px;
-        font-size: 1.2em;
-    }
-    
-    .gallery-nav-btn.prev {
-        left: 0;
-    }
-    
-    .gallery-nav-btn.next {
-        right: 0;
-    }
-    
     .gallery-info {
         padding: 15px;
     }
@@ -1473,117 +1459,6 @@ body::before { display: none !important; }
     .gallery-thumbnail {
         width: 50px;
         height: 50px;
-    }
-    
-    /* Мобильные стили для страницы персонажа */
-    .character-detail-container {
-        padding: 10px;
-    }
-    
-    .character-detail {
-        padding: 20px;
-    }
-    
-    .character-header {
-        flex-direction: column;
-        gap: 20px;
-        text-align: center;
-        align-items: center;
-    }
-    
-    .character-portrait {
-        flex-shrink: 0;
-    }
-    
-    .avatar-image {
-        width: 150px;
-        height: 150px;
-    }
-    
-    .character-info h1 {
-        font-size: 2em;
-        text-align: center;
-    }
-    
-    .character-meta {
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
-    
-    .character-type, .character-gender {
-        font-size: 0.8em;
-        padding: 6px 12px;
-    }
-    
-    .character-author {
-        text-align: center;
-        font-size: 1em;
-    }
-    
-    .character-content {
-        gap: 20px;
-    }
-    
-    .character-section {
-        padding: 15px;
-    }
-    
-    .character-section h3 {
-        font-size: 1.2em;
-        margin-bottom: 12px;
-    }
-    
-    .character-stats {
-        gap: 6px;
-    }
-    
-    .character-stats li {
-        padding: 6px 10px;
-        font-size: 0.9em;
-    }
-    
-    .character-images {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .detail-image {
-        max-width: 100%;
-        height: 150px;
-    }
-    
-    .character-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .arts-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-    
-    .arts-grid {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 10px;
-    }
-    
-    .art-item {
-        text-align: center;
-    }
-    
-    .art-image {
-        width: 100%;
-        height: 120px;
-    }
-    
-    .art-title {
-        font-size: 0.9em;
-    }
-    
-    .art-description {
-        font-size: 0.8em;
     }
 }
 
@@ -1626,4 +1501,115 @@ body::before { display: none !important; }
 .back-btn:hover {
     background: var(--accent);
     transform: translateY(-2px);
+}
+
+/* Мобильные стили для страницы персонажа */
+.character-detail-container {
+    padding: 10px;
+}
+
+.character-detail {
+    padding: 20px;
+}
+
+.character-header {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+    align-items: center;
+}
+
+.character-portrait {
+    flex-shrink: 0;
+}
+
+.avatar-image {
+    width: 150px;
+    height: 150px;
+}
+
+.character-info h1 {
+    font-size: 2em;
+    text-align: center;
+}
+
+.character-meta {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.character-type, .character-gender {
+    font-size: 0.8em;
+    padding: 6px 12px;
+}
+
+.character-author {
+    text-align: center;
+    font-size: 1em;
+}
+
+.character-content {
+    gap: 20px;
+}
+
+.character-section {
+    padding: 15px;
+}
+
+.character-section h3 {
+    font-size: 1.2em;
+    margin-bottom: 12px;
+}
+
+.character-stats {
+    gap: 6px;
+}
+
+.character-stats li {
+    padding: 6px 10px;
+    font-size: 0.9em;
+}
+
+.character-images {
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.detail-image {
+    max-width: 100%;
+    height: 150px;
+}
+
+.character-actions {
+    flex-direction: column;
+    gap: 10px;
+}
+
+.arts-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+}
+
+.arts-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.art-item {
+    text-align: center;
+}
+
+.art-image {
+    width: 100%;
+    height: 120px;
+}
+
+.art-title {
+    font-size: 0.9em;
+}
+
+.art-description {
+    font-size: 0.8em;
 }

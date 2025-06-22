@@ -480,13 +480,6 @@ function updateGalleryView(allImages) {
         title.textContent = image.title;
         description.textContent = image.description;
     }
-
-    // Обновляем состояние кнопок навигации
-    const prevBtn = document.querySelector('.gallery-nav-btn.prev');
-    const nextBtn = document.querySelector('.gallery-nav-btn.next');
-    
-    prevBtn.disabled = currentImageIndex <= 0;
-    nextBtn.disabled = currentImageIndex >= allImages.length - 1;
     
     console.log('Вид галереи обновлен');
 }
@@ -513,60 +506,6 @@ function goToImage(index) {
     renderGalleryThumbnails(allImages);
     
     console.log('Переход к изображению завершен');
-}
-
-// Следующее изображение
-function nextImage() {
-    console.log('Переход к следующему изображению');
-    
-    const allImages = [
-        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
-        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
-    ];
-    
-    characterArts.forEach(art => {
-        allImages.push({
-            url: art.imageUrl,
-            title: art.title,
-            description: art.description || ''
-        });
-    });
-
-    if (currentImageIndex < allImages.length - 1) {
-        currentImageIndex++;
-        updateGalleryView(allImages);
-        renderGalleryThumbnails(allImages);
-        console.log('Переход к следующему изображению завершен');
-    } else {
-        console.log('Достигнут конец галереи');
-    }
-}
-
-// Предыдущее изображение
-function previousImage() {
-    console.log('Переход к предыдущему изображению');
-    
-    const allImages = [
-        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
-        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
-    ];
-    
-    characterArts.forEach(art => {
-        allImages.push({
-            url: art.imageUrl,
-            title: art.title,
-            description: art.description || ''
-        });
-    });
-
-    if (currentImageIndex > 0) {
-        currentImageIndex--;
-        updateGalleryView(allImages);
-        renderGalleryThumbnails(allImages);
-        console.log('Переход к предыдущему изображению завершен');
-    } else {
-        console.log('Достигнуто начало галереи');
-    }
 }
 
 // Показать ошибку
@@ -633,8 +572,6 @@ window.openUploadModal = openUploadModal;
 window.closeUploadModal = closeUploadModal;
 window.openGallery = openGallery;
 window.closeGalleryModal = closeGalleryModal;
-window.nextImage = nextImage;
-window.previousImage = previousImage;
 window.goToImage = goToImage;
 
 // Закрытие модальных окон при клике вне их
