@@ -748,12 +748,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Функция принудительного обновления галереи
     window.refreshGallery = function() {
+        const refreshBtn = document.querySelector('.refresh-btn');
+        
+        // Добавляем анимацию загрузки к кнопке
+        if (refreshBtn) {
+            refreshBtn.classList.add('loading');
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Обновление...';
+        }
+        
+        // Сбрасываем кэш и загружаем заново
         isInitialized = false;
         lastLoadTime = 0;
         allCharacters = [];
         displayedCharacters = [];
         lastDoc = null;
-        loadCharacters(false, true);
+        
+        // Загружаем персонажей с небольшой задержкой для красоты
+        setTimeout(() => {
+            loadCharacters(false, true).finally(() => {
+                // Убираем анимацию загрузки
+                if (refreshBtn) {
+                    refreshBtn.classList.remove('loading');
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Обновить';
+                }
+            });
+        }, 300);
     };
 
     // --- Кнопки профиля и добавления персонажа ---
