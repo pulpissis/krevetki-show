@@ -863,6 +863,57 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Ошибка при обновлении всех персонажей: ' + e.message);
         }
     };
+
+    // Функция для назначения роли администратора
+    window.makeAdmin = async function() {
+        if (typeof firebase === 'undefined') {
+            alert('Firebase не загружен');
+            return;
+        }
+        
+        try {
+            const currentUser = firebase.auth().currentUser;
+            if (!currentUser) {
+                alert('Необходимо войти в аккаунт');
+                return;
+            }
+            
+            // Запрашиваем email пользователя, которого нужно сделать админом
+            const targetEmail = prompt('Введите email пользователя, которого нужно сделать администратором:');
+            if (!targetEmail) {
+                alert('Email не введен');
+                return;
+            }
+            
+            // Ищем пользователя по email
+            const usersSnapshot = await firebase.firestore().collection('users').get();
+            let targetUser = null;
+            
+            for (const doc of usersSnapshot.docs) {
+                const userData = doc.data();
+                if (userData.email === targetEmail) {
+                    targetUser = { id: doc.id, ...userData };
+                    break;
+                }
+            }
+            
+            if (!targetUser) {
+                alert('Пользователь с таким email не найден');
+                return;
+            }
+            
+            // Обновляем роль пользователя на 'admin'
+            await firebase.firestore().collection('users').doc(targetUser.id).update({
+                role: 'admin'
+            });
+            
+            alert(`Пользователь ${targetEmail} успешно назначен администратором!`);
+            
+        } catch (e) {
+            console.error('Ошибка при назначении администратора:', e);
+            alert('Ошибка при назначении администратора: ' + e.message);
+        }
+    };
 });
 
 // Стилизация выделения для случайного персонажа
