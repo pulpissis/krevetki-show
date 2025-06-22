@@ -1415,16 +1415,17 @@ body::before { display: none !important; }
     transition: width 0.3s ease;
 }
 
-/* Новая галерея - простой и понятный дизайн */
+/* Новая галерея - красивый и функциональный дизайн */
 .gallery-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.85);
     display: none;
     z-index: 9999;
+    backdrop-filter: blur(5px);
 }
 
 .gallery-modal .modal-content {
@@ -1442,26 +1443,25 @@ body::before { display: none !important; }
 }
 
 .gallery-header {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
     background: rgba(0, 0, 0, 0.8);
     color: white;
     padding: 15px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 10;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .gallery-header h2 {
     margin: 0;
     font-size: 1.5em;
     color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-.gallery-close {
+.gallery-header .close {
     background: none;
     border: none;
     color: white;
@@ -1474,91 +1474,105 @@ body::before { display: none !important; }
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: background 0.3s;
+    transition: all 0.3s;
 }
 
-.gallery-close:hover {
+.gallery-header .close:hover {
     background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
 }
 
 .gallery-body {
     flex: 1;
     display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: relative;
+}
+
+.gallery-main {
+    flex: 1;
+    display: flex;
     align-items: center;
     justify-content: center;
-    padding: 80px 20px 20px;
     position: relative;
-    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.gallery-image-container {
+    position: relative;
+    max-width: 80%;
+    max-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .gallery-main-image {
-    max-width: 85%;
-    max-height: 50vh;
+    max-width: 100%;
+    max-height: 100%;
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    transition: transform 0.3s ease;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    transition: all 0.3s ease;
 }
 
 .gallery-main-image:hover {
     transform: scale(1.02);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
 }
 
-.gallery-nav-btn {
+.gallery-nav {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
     background: rgba(0, 0, 0, 0.7);
     color: white;
     border: none;
-    width: 60px;
-    height: 100px;
+    width: 50px;
+    height: 80px;
     cursor: pointer;
-    font-size: 2em;
+    font-size: 1.5em;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s;
     z-index: 10;
-    border-radius: 0;
+    border-radius: 8px;
 }
 
-.gallery-nav-btn:hover {
+.gallery-nav:hover {
     background: rgba(0, 119, 182, 0.8);
     transform: translateY(-50%) scale(1.05);
 }
 
-.gallery-nav-btn:disabled {
+.gallery-nav:disabled {
     background: rgba(100, 100, 100, 0.3);
     cursor: not-allowed;
     transform: translateY(-50%) scale(1);
 }
 
-.gallery-nav-btn.prev {
-    left: 0;
-    border-radius: 0 10px 10px 0;
+.gallery-nav.prev {
+    left: 20px;
 }
 
-.gallery-nav-btn.next {
-    right: 0;
-    border-radius: 10px 0 0 10px;
+.gallery-nav.next {
+    right: 20px;
 }
 
 .gallery-info {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
     background: rgba(0, 0, 0, 0.8);
     color: white;
-    padding: 20px;
+    padding: 15px 20px;
     text-align: center;
+    border-radius: 8px;
+    margin-bottom: 15px;
 }
 
 .gallery-info h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
     font-size: 1.3em;
     color: #0077B6;
 }
@@ -1567,27 +1581,25 @@ body::before { display: none !important; }
     margin: 0;
     color: #ccc;
     line-height: 1.5;
+    font-size: 0.95em;
 }
 
 .gallery-thumbnails {
-    position: absolute;
-    bottom: 100px;
-    left: 50%;
-    transform: translateX(-50%);
     display: flex;
     gap: 10px;
-    padding: 10px;
+    padding: 15px;
     background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    max-width: 90%;
+    border-radius: 8px;
     overflow-x: auto;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 .gallery-thumbnail {
     width: 60px;
     height: 60px;
     object-fit: cover;
-    border-radius: 5px;
+    border-radius: 6px;
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.3s;
@@ -1601,7 +1613,8 @@ body::before { display: none !important; }
 
 .gallery-thumbnail.active {
     border-color: #0077B6;
-    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
+    box-shadow: 0 0 15px rgba(0, 119, 182, 0.6);
+    transform: scale(1.05);
 }
 
 /* Мобильная версия галереи */
@@ -1614,25 +1627,38 @@ body::before { display: none !important; }
         font-size: 1.2em;
     }
     
-    .gallery-close {
+    .gallery-header .close {
         font-size: 1.5em;
         width: 35px;
         height: 35px;
     }
     
     .gallery-body {
-        padding: 70px 10px 10px;
+        padding: 10px;
     }
     
-    .gallery-main-image {
+    .gallery-image-container {
         max-width: 90%;
-        max-height: 65vh;
-        width: auto;
-        height: auto;
+        max-height: 60vh;
+    }
+    
+    .gallery-nav {
+        width: 40px;
+        height: 60px;
+        font-size: 1.2em;
+    }
+    
+    .gallery-nav.prev {
+        left: 10px;
+    }
+    
+    .gallery-nav.next {
+        right: 10px;
     }
     
     .gallery-info {
-        padding: 15px;
+        padding: 12px 15px;
+        margin-bottom: 10px;
     }
     
     .gallery-info h3 {
@@ -1640,9 +1666,8 @@ body::before { display: none !important; }
     }
     
     .gallery-thumbnails {
-        bottom: 80px;
         gap: 8px;
-        padding: 8px;
+        padding: 10px;
     }
     
     .gallery-thumbnail {

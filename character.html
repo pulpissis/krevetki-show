@@ -90,30 +90,28 @@
     <!-- Модальное окно для просмотра галереи -->
     <div id="galleryModal" class="modal gallery-modal">
         <div class="modal-content gallery-content">
-            <div class="modal-header">
+            <div class="modal-header gallery-header">
                 <h2><i class="fas fa-images"></i> Галерея артов</h2>
                 <span class="close" onclick="closeGalleryModal()">&times;</span>
             </div>
-            <div class="modal-body">
-                <div class="gallery-container">
-                    <div class="gallery-main">
-                        <button class="gallery-nav prev" onclick="previousImage()">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <div class="gallery-image-container">
-                            <img id="galleryMainImage" src="" alt="">
-                            <div class="gallery-image-info">
-                                <h3 id="galleryImageTitle"></h3>
-                                <p id="galleryImageDescription"></p>
-                            </div>
-                        </div>
-                        <button class="gallery-nav next" onclick="nextImage()">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+            <div class="modal-body gallery-body">
+                <div class="gallery-main">
+                    <button class="gallery-nav prev" onclick="previousImage()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="gallery-image-container">
+                        <img id="galleryMainImage" src="" alt="">
                     </div>
-                    <div class="gallery-thumbnails" id="galleryThumbnails">
-                        <!-- Миниатюры будут добавлены динамически -->
-                    </div>
+                    <button class="gallery-nav next" onclick="nextImage()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                <div class="gallery-info">
+                    <h3 id="galleryImageTitle"></h3>
+                    <p id="galleryImageDescription"></p>
+                </div>
+                <div class="gallery-thumbnails" id="galleryThumbnails">
+                    <!-- Миниатюры будут добавлены динамически -->
                 </div>
             </div>
         </div>
