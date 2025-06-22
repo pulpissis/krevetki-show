@@ -467,12 +467,20 @@ function updateGalleryView(allImages) {
     const mainImage = document.getElementById('galleryMainImage');
     const title = document.getElementById('galleryImageTitle');
     const description = document.getElementById('galleryImageDescription');
+    const deleteBtn = document.getElementById('galleryDeleteBtn');
 
     if (currentImageIndex >= 0 && currentImageIndex < allImages.length) {
         const image = allImages[currentImageIndex];
         mainImage.src = image.url;
         title.textContent = image.title;
         description.textContent = image.description;
+        
+        // Показываем кнопку удаления только для артов (не для аватарки и основного арта)
+        if (currentImageIndex >= 2) {
+            deleteBtn.style.display = 'flex';
+        } else {
+            deleteBtn.style.display = 'none';
+        }
     }
 }
 
@@ -494,6 +502,83 @@ function goToImage(index) {
 
     updateGalleryView(allImages);
     renderGalleryThumbnails(allImages);
+}
+
+// Удаление текущего изображения из галереи
+async function deleteCurrentImage() {
+    if (!currentCharacter) {
+        alert('Персонаж не загружен');
+        return;
+    }
+    
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+        alert('Необходимо войти в систему для удаления артов');
+        return;
+    }
+    
+    // Получаем все изображения
+    const allImages = [
+        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
+        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
+    ];
+    
+    characterArts.forEach(art => {
+        allImages.push({
+            url: art.imageUrl,
+            title: art.title,
+            description: art.description || '',
+            id: art.id
+        });
+    });
+    
+    if (currentImageIndex < 2) {
+        alert('Нельзя удалить аватарку или основной арт');
+        return;
+    }
+    
+    const imageToDelete = allImages[currentImageIndex];
+    const artToDelete = characterArts[currentImageIndex - 2];
+    
+    if (!artToDelete) {
+        alert('Арт не найден');
+        return;
+    }
+    
+    // Проверяем права на удаление
+    if (currentUser.uid !== artToDelete.authorId && currentUserRole !== 'admin') {
+        alert('У вас нет прав для удаления этого арта');
+        return;
+    }
+    
+    // Подтверждение удаления
+    const confirmDelete = confirm(`Вы уверены, что хотите удалить арт "${imageToDelete.title}"?`);
+    if (!confirmDelete) {
+        return;
+    }
+    
+    try {
+        // Удаляем арт из Firestore
+        await firebase.firestore()
+            .collection('characters')
+            .doc(currentCharacter.id)
+            .collection('arts')
+            .doc(artToDelete.id)
+            .delete();
+        
+        // Обновляем галерею
+        await loadCharacterArts(currentCharacter.id);
+        renderCharacterDetail(currentCharacter);
+        
+        // Закрываем галерею
+        closeGalleryModal();
+        
+        alert('Арт успешно удален!');
+        
+    } catch (error) {
+        console.error('Ошибка удаления арта:', error);
+        alert('Ошибка удаления арта: ' + error.message);
+    }
 }
 
 // Показать ошибку
@@ -612,6 +697,7 @@ window.openGallery = openGallery;
 window.closeGalleryModal = closeGalleryModal;
 window.goToImage = goToImage;
 window.deleteArt = deleteArt;
+window.deleteCurrentImage = deleteCurrentImage;
 
 // Закрытие модальных окон при клике вне их
 window.onclick = function(event) {
