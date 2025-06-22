@@ -8,7 +8,27 @@
     <title>Морская галерея персонажей</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Font Awesome с несколькими CDN для надежности -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.4.0/css/all.css">
+    <!-- Fallback для иконок -->
+    <style>
+        /* Fallback иконки если Font Awesome не загрузился */
+        .fas.fa-bars::before { content: "☰"; }
+        .fas.fa-search::before { content: "🔍"; }
+        .fas.fa-sort-alpha-down::before { content: "↓"; }
+        .fas.fa-sign-in-alt::before { content: "→"; }
+        .fas.fa-user-plus::before { content: "+"; }
+        .fas.fa-sign-out-alt::before { content: "←"; }
+        .fas.fa-times::before { content: "✕"; }
+        .fas.fa-plus::before { content: "+"; }
+        .fas.fa-eye::before { content: "👁"; }
+        .fas.fa-edit::before { content: "✏"; }
+        .fas.fa-trash::before { content: "🗑"; }
+        .fas.fa-star::before { content: "★"; }
+        .fas.fa-fish::before { content: "🐟"; }
+    </style>
 </head>
 <body>
     <div class="ocean-sky">
@@ -41,6 +61,11 @@
         <!-- Бургер-меню -->
         <button id="burgerMenuBtn" class="burger-menu-btn" style="display: none;">
             <i class="fas fa-bars"></i>
+        </button>
+        
+        <!-- Тестовая кнопка для отладки -->
+        <button id="testBurgerBtn" style="position: fixed; top: 80px; right: 20px; z-index: 10000; background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+            Тест бургер
         </button>
     </header>
     

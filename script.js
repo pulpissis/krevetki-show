@@ -715,40 +715,81 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBurgerMenu = document.getElementById('closeBurgerMenu');
     const burgerUserEmail = document.getElementById('burgerUserEmail');
 
-    console.log('Бургер-меню элементы:', { burgerMenuBtn, burgerMenu, closeBurgerMenu });
+    console.log('Бургер-меню элементы:', { 
+        burgerMenuBtn: burgerMenuBtn, 
+        burgerMenu: burgerMenu, 
+        closeBurgerMenu: closeBurgerMenu,
+        burgerMenuBtnExists: !!burgerMenuBtn,
+        burgerMenuExists: !!burgerMenu
+    });
 
     // Функция открытия бургер-меню
-    function openBurgerMenu() {
-        console.log('Открытие бургер-меню');
+    function openBurgerMenu(event) {
+        console.log('Открытие бургер-меню', event);
+        event.preventDefault();
+        event.stopPropagation();
+        
         if (burgerMenu) {
             const user = firebase.auth().currentUser;
             if (user && burgerUserEmail) {
                 burgerUserEmail.textContent = user.email;
             }
             burgerMenu.classList.add('show');
-            console.log('Класс show добавлен');
+            console.log('Класс show добавлен к бургер-меню');
+        } else {
+            console.error('Бургер-меню не найден!');
         }
     }
 
     // Функция закрытия бургер-меню
-    function closeBurgerMenuFunc() {
-        console.log('Закрытие бургер-меню');
+    function closeBurgerMenuFunc(event) {
+        console.log('Закрытие бургер-меню', event);
+        if (event) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        
         if (burgerMenu) {
             burgerMenu.classList.remove('show');
+            console.log('Класс show удален из бургер-меню');
         }
     }
 
+    // Добавляем обработчики для бургер-меню
     if (burgerMenuBtn) {
-        // Добавляем несколько способов обработки клика
-        burgerMenuBtn.addEventListener('click', openBurgerMenu);
-        burgerMenuBtn.onclick = openBurgerMenu;
-        console.log('Обработчик клика добавлен к бургер-меню');
+        console.log('Добавляем обработчики к кнопке бургер-меню');
+        
+        // Удаляем старые обработчики
+        burgerMenuBtn.removeEventListener('click', openBurgerMenu);
+        burgerMenuBtn.onclick = null;
+        
+        // Добавляем новые обработчики
+        burgerMenuBtn.addEventListener('click', openBurgerMenu, { passive: false });
+        burgerMenuBtn.addEventListener('touchstart', openBurgerMenu, { passive: false });
+        
+        // Добавляем стили для отладки
+        burgerMenuBtn.style.cursor = 'pointer';
+        burgerMenuBtn.style.pointerEvents = 'auto';
+        
+        console.log('Обработчики добавлены к бургер-меню');
+    } else {
+        console.error('Кнопка бургер-меню не найдена!');
     }
 
     if (closeBurgerMenu) {
-        closeBurgerMenu.addEventListener('click', closeBurgerMenuFunc);
-        closeBurgerMenu.onclick = closeBurgerMenuFunc;
-        console.log('Обработчик закрытия добавлен');
+        console.log('Добавляем обработчики к кнопке закрытия');
+        
+        // Удаляем старые обработчики
+        closeBurgerMenu.removeEventListener('click', closeBurgerMenuFunc);
+        closeBurgerMenu.onclick = null;
+        
+        // Добавляем новые обработчики
+        closeBurgerMenu.addEventListener('click', closeBurgerMenuFunc, { passive: false });
+        closeBurgerMenu.addEventListener('touchstart', closeBurgerMenuFunc, { passive: false });
+        
+        console.log('Обработчики закрытия добавлены');
+    } else {
+        console.error('Кнопка закрытия бургер-меню не найдена!');
     }
 
     // Клик вне меню
@@ -772,6 +813,28 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // Тестовая кнопка для отладки бургер-меню
+    const testBurgerBtn = document.getElementById('testBurgerBtn');
+    if (testBurgerBtn) {
+        testBurgerBtn.addEventListener('click', function() {
+            console.log('Тестовая кнопка нажата');
+            console.log('Состояние бургер-меню:', {
+                burgerMenuBtn: burgerMenuBtn,
+                burgerMenu: burgerMenu,
+                burgerMenuClassList: burgerMenu ? burgerMenu.classList.toString() : 'не найден',
+                burgerMenuStyle: burgerMenu ? burgerMenu.style.display : 'не найден'
+            });
+            
+            // Пытаемся открыть бургер-меню
+            if (burgerMenu) {
+                burgerMenu.classList.add('show');
+                console.log('Бургер-меню открыт через тестовую кнопку');
+            } else {
+                console.error('Бургер-меню не найден для тестовой кнопки');
+            }
+        });
+    }
 
     // Функция для проверки пользователей (для отладки)
     window.checkUsers = async function() {

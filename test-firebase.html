@@ -3,118 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест Firebase</title>
+    <title>Тест иконок и бургер-меню</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .icon-test {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            min-width: 80px;
+        }
+        .burger-test {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #0077b6;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 9999;
+        }
+        .burger-menu-test {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100vh;
+            background: white;
+            z-index: 9998;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+        }
+        .burger-menu-test.show {
+            transform: translateX(0);
+        }
+    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fallback иконки -->
+    <style>
+        .fas.fa-bars::before { content: "☰"; }
+        .fas.fa-search::before { content: "🔍"; }
+        .fas.fa-sort-alpha-down::before { content: "↓"; }
+        .fas.fa-sign-in-alt::before { content: "→"; }
+        .fas.fa-user-plus::before { content: "+"; }
+        .fas.fa-times::before { content: "✕"; }
+    </style>
 </head>
 <body>
-    <h1>Тест Firebase</h1>
-    <div id="status">Проверка...</div>
-    <br>
-    <button onclick="checkUsers()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
-        Проверить зарегистрированных пользователей
-    </button>
-    <button onclick="testBurgerMenu()" style="padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">
-        Тест бургер-меню
+    <h1>Тест иконок и бургер-меню</h1>
+    
+    <div class="test-section">
+        <h2>Тест иконок Font Awesome</h2>
+        <div class="icon-test">
+            <i class="fas fa-bars"></i><br>
+            Бургер
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-search"></i><br>
+            Поиск
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-sort-alpha-down"></i><br>
+            Сортировка
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-sign-in-alt"></i><br>
+            Вход
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-user-plus"></i><br>
+            Регистрация
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-times"></i><br>
+            Закрыть
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Тест бургер-меню</h2>
+        <p>Нажмите на кнопку бургер-меню в правом верхнем углу</p>
+        <button onclick="testBurgerMenu()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Тест бургер-меню
+        </button>
+    </div>
+
+    <!-- Тестовое бургер-меню -->
+    <button class="burger-test" onclick="toggleBurgerMenu()">
+        <i class="fas fa-bars"></i>
     </button>
     
-    <!-- Firebase -->
-    <script src="firebase/firebase-app-compat.js"></script>
-    <script src="firebase/firebase-auth-compat.js"></script>
-    <script src="firebase/firebase-firestore-compat.js"></script>
-    
+    <div class="burger-menu-test" id="testBurgerMenu">
+        <div style="padding: 20px;">
+            <h3>Тестовое меню</h3>
+            <p>Это тестовое бургер-меню</p>
+            <button onclick="toggleBurgerMenu()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Закрыть
+            </button>
+        </div>
+    </div>
+
     <script>
-        const statusDiv = document.getElementById('status');
-        
-        try {
-            // Проверяем, загрузился ли Firebase
-            if (typeof firebase === 'undefined') {
-                statusDiv.innerHTML = '<p style="color: red;">❌ Firebase не загружен!</p>';
-                throw new Error('Firebase не загружен');
-            }
-            
-            statusDiv.innerHTML = '<p style="color: green;">✅ Firebase загружен!</p>';
-            
-            // Инициализируем Firebase
-            const firebaseConfig = {
-                apiKey: "AIzaSyDs5ojcVcFK6zqiGRukpVHZo4HJ6MnqObg",
-                authDomain: "krevetki-show.firebaseapp.com",
-                projectId: "krevetki-show",
-                storageBucket: "krevetki-show.firebasestorage.app",
-                messagingSenderId: "836884753704",
-                appId: "1:836884753704:web:0c879b2b52e024399e741d"
-            };
-            
-            firebase.initializeApp(firebaseConfig);
-            statusDiv.innerHTML += '<p style="color: green;">✅ Firebase инициализирован!</p>';
-            
-            // Проверяем Auth
-            if (firebase.auth) {
-                statusDiv.innerHTML += '<p style="color: green;">✅ Firebase Auth доступен!</p>';
-            } else {
-                statusDiv.innerHTML += '<p style="color: red;">❌ Firebase Auth недоступен!</p>';
-            }
-            
-            // Проверяем Firestore
-            if (firebase.firestore) {
-                statusDiv.innerHTML += '<p style="color: green;">✅ Firebase Firestore доступен!</p>';
-            } else {
-                statusDiv.innerHTML += '<p style="color: red;">❌ Firebase Firestore недоступен!</p>';
-            }
-            
-        } catch (error) {
-            statusDiv.innerHTML += '<p style="color: red;">❌ Ошибка: ' + error.message + '</p>';
-            console.error('Ошибка:', error);
+        function toggleBurgerMenu() {
+            const menu = document.getElementById('testBurgerMenu');
+            menu.classList.toggle('show');
+            console.log('Бургер-меню переключено:', menu.classList.contains('show'));
         }
-        
-        // Функция для проверки пользователей
-        window.checkUsers = async function() {
-            try {
-                const usersSnapshot = await firebase.firestore().collection('users').get();
-                console.log('Всего пользователей:', usersSnapshot.size);
-                
-                let userList = 'Зарегистрированные пользователи:\n\n';
-                usersSnapshot.forEach(doc => {
-                    const userData = doc.data();
-                    userList += `Email: ${userData.email}\n`;
-                    userList += `Username: ${userData.username}\n`;
-                    userList += `Role: ${userData.role}\n`;
-                    userList += `UID: ${userData.uid}\n`;
-                    userList += '---\n';
-                });
-                
-                if (usersSnapshot.size === 0) {
-                    userList = 'Пользователей пока нет';
-                }
-                
-                alert(userList);
-            } catch (e) {
-                console.error('Ошибка при получении пользователей:', e);
-                alert('Ошибка при получении пользователей: ' + e.message);
-            }
-        };
-        
-        // Функция для тестирования бургер-меню
-        window.testBurgerMenu = function() {
-            const burgerMenuBtn = document.getElementById('burgerMenuBtn');
-            const burgerMenu = document.getElementById('burgerMenu');
+
+        function testBurgerMenu() {
+            console.log('Тест бургер-меню запущен');
+            toggleBurgerMenu();
+        }
+
+        // Проверяем загрузку Font Awesome
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Страница загружена');
             
-            console.log('Тест бургер-меню:', { burgerMenuBtn, burgerMenu });
-            
-            if (burgerMenuBtn) {
-                console.log('Кнопка бургер-меню найдена');
-                burgerMenuBtn.click();
+            // Проверяем, загрузились ли иконки
+            const testIcon = document.querySelector('.fas.fa-bars');
+            if (testIcon) {
+                console.log('Иконка найдена:', testIcon);
+                const computedStyle = window.getComputedStyle(testIcon, '::before');
+                console.log('Стиль иконки:', computedStyle.content);
             } else {
-                console.log('Кнопка бургер-меню не найдена');
+                console.log('Иконка не найдена');
             }
-            
-            if (burgerMenu) {
-                console.log('Меню найдено, классы:', burgerMenu.className);
-                setTimeout(() => {
-                    console.log('Классы после клика:', burgerMenu.className);
-                }, 100);
-            } else {
-                console.log('Меню не найдено');
-            }
-        };
+        });
     </script>
 </body>
 </html> 
