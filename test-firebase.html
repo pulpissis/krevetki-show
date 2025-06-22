@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест Firebase</title>
+</head>
+<body>
+    <h1>Тест Firebase</h1>
+    <div id="status">Проверка...</div>
+    
+    <!-- Firebase -->
+    <script src="firebase/firebase-app-compat.js"></script>
+    <script src="firebase/firebase-auth-compat.js"></script>
+    <script src="firebase/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        try {
+            // Проверяем, загрузился ли Firebase
+            if (typeof firebase === 'undefined') {
+                statusDiv.innerHTML = '<p style="color: red;">❌ Firebase не загружен!</p>';
+                throw new Error('Firebase не загружен');
+            }
+            
+            statusDiv.innerHTML = '<p style="color: green;">✅ Firebase загружен!</p>';
+            
+            // Инициализируем Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyDs5ojcVcFK6zqiGRukpVHZo4HJ6MnqObg",
+                authDomain: "krevetki-show.firebaseapp.com",
+                projectId: "krevetki-show",
+                storageBucket: "krevetki-show.firebasestorage.app",
+                messagingSenderId: "836884753704",
+                appId: "1:836884753704:web:0c879b2b52e024399e741d"
+            };
+            
+            firebase.initializeApp(firebaseConfig);
+            statusDiv.innerHTML += '<p style="color: green;">✅ Firebase инициализирован!</p>';
+            
+            // Проверяем Auth
+            if (firebase.auth) {
+                statusDiv.innerHTML += '<p style="color: green;">✅ Firebase Auth доступен!</p>';
+            } else {
+                statusDiv.innerHTML += '<p style="color: red;">❌ Firebase Auth недоступен!</p>';
+            }
+            
+            // Проверяем Firestore
+            if (firebase.firestore) {
+                statusDiv.innerHTML += '<p style="color: green;">✅ Firebase Firestore доступен!</p>';
+            } else {
+                statusDiv.innerHTML += '<p style="color: red;">❌ Firebase Firestore недоступен!</p>';
+            }
+            
+        } catch (error) {
+            statusDiv.innerHTML += '<p style="color: red;">❌ Ошибка: ' + error.message + '</p>';
+            console.error('Ошибка:', error);
+        }
+    </script>
+</body>
+</html> 

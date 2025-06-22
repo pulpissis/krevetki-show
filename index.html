@@ -93,21 +93,11 @@
         </footer>
     </div>
     <!-- Firebase и скрипты -->
-    <script src="https://unpkg.com/firebase@10.12.2/dist/firebase-app-compat.js"></script>
-    <script src="https://unpkg.com/firebase@10.12.2/dist/firebase-auth-compat.js"></script>
-    <script src="https://unpkg.com/firebase@10.12.2/dist/firebase-firestore-compat.js"></script>
+    <script src="firebase/firebase-app-compat.js"></script>
+    <script src="firebase/firebase-auth-compat.js"></script>
+    <script src="firebase/firebase-firestore-compat.js"></script>
     
     <script>
-      // Проверяем, загрузился ли Firebase
-      function checkFirebase() {
-        if (typeof firebase === 'undefined') {
-          console.error('Firebase не загружен!');
-          alert('Ошибка загрузки Firebase. Попробуйте обновить страницу.');
-          return false;
-        }
-        return true;
-      }
-      
       const firebaseConfig = {
         apiKey: "AIzaSyDs5ojcVcFK6zqiGRukpVHZo4HJ6MnqObg",
         authDomain: "krevetki-show.firebaseapp.com",
@@ -117,15 +107,12 @@
         appId: "1:836884753704:web:0c879b2b52e024399e741d"
       };
       
-      // Инициализируем Firebase только если он загружен
-      if (checkFirebase()) {
-        try {
-          firebase.initializeApp(firebaseConfig);
-          console.log('Firebase успешно инициализирован');
-        } catch (error) {
-          console.error('Ошибка инициализации Firebase:', error);
-          alert('Ошибка инициализации Firebase. Попробуйте обновить страницу.');
-        }
+      // Инициализируем Firebase
+      try {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase успешно инициализирован');
+      } catch (error) {
+        console.error('Ошибка инициализации Firebase:', error);
       }
     </script>
     <script src="script.js"></script>

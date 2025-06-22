@@ -3,16 +3,6 @@ const characters = [];
 // Получаем элементы интерфейса
 const searchInput = document.querySelector('.search-input');
 
-// Проверяем, загружен ли Firebase
-function checkFirebaseLoaded() {
-    if (typeof firebase === 'undefined') {
-        console.error('Firebase не загружен!');
-        alert('Ошибка загрузки Firebase. Попробуйте обновить страницу или использовать VPN.');
-        return false;
-    }
-    return true;
-}
-
 function createCharacterCard(character) {
     const card = document.createElement('div');
     card.className = 'character-card-container';
@@ -25,7 +15,7 @@ function createCharacterCard(character) {
 
     // Проверяем права на редактирование/удаление
     let canEdit = false;
-    if (checkFirebaseLoaded()) {
+    if (typeof firebase !== 'undefined') {
         const currentUser = firebase.auth().currentUser;
         canEdit = currentUser && (
             currentUser.uid === character.authorId || 
@@ -104,7 +94,7 @@ function renderGallery(data) {
 // Заглушки для будущей функциональности
 document.addEventListener('DOMContentLoaded', function() {
     // Проверяем, загружен ли Firebase перед инициализацией
-    if (!checkFirebaseLoaded()) {
+    if (typeof firebase === 'undefined') {
         console.error('Firebase не загружен, некоторые функции будут недоступны');
         return;
     }
@@ -158,7 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const registerSubmit = document.getElementById('registerSubmit');
     if (registerSubmit) {
         registerSubmit.onclick = async function() {
-            if (!checkFirebaseLoaded()) return;
+            if (typeof firebase === 'undefined') return;
             
             const email = document.getElementById('registerEmail').value.trim();
             const username = document.getElementById('registerUsername').value.trim();
@@ -194,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginSubmit = document.getElementById('loginSubmit');
     if (loginSubmit) {
         loginSubmit.onclick = async function() {
-            if (!checkFirebaseLoaded()) return;
+            if (typeof firebase === 'undefined') return;
             
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
@@ -274,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Получение роли пользователя ---
     window.currentUserRole = null;
     async function fetchUserRole(user) {
-        if (!user || !checkFirebaseLoaded()) { window.currentUserRole = null; return; }
+        if (!user || typeof firebase === 'undefined') { window.currentUserRole = null; return; }
         try {
             const doc = await firebase.firestore().collection('users').doc(user.uid).get();
             if (doc.exists) {
@@ -287,7 +277,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    if (checkFirebaseLoaded()) {
+    if (typeof firebase !== 'undefined') {
         firebase.auth().onAuthStateChanged(async function(user) {
             updateAuthUI(user);
             await fetchUserRole(user);
@@ -298,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Кнопка выхода
     if (logoutBtn) {
         logoutBtn.onclick = async function() {
-            if (!checkFirebaseLoaded()) return;
+            if (typeof firebase === 'undefined') return;
             try {
                 await firebase.auth().signOut();
                 // Очищаем данные пользователя
@@ -319,7 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Открытие модалки добавления персонажа
     if (addCharacterBtn) {
         addCharacterBtn.onclick = () => {
-            if (!checkFirebaseLoaded()) return;
+            if (typeof firebase === 'undefined') return;
             if (!firebase.auth().currentUser) {
                 alert('Сначала войдите в аккаунт!');
                 return;
@@ -376,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const addCharacterSubmit = document.getElementById('addCharacterSubmit');
     if (addCharacterSubmit) {
         addCharacterSubmit.onclick = async function() {
-            if (!checkFirebaseLoaded()) return;
+            if (typeof firebase === 'undefined') return;
             
             const errorEl = document.getElementById('addCharacterError');
             errorEl.textContent = '';
@@ -482,7 +472,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Обновляем функцию загрузки персонажей
     async function loadCharacters(loadMore = false) {
-        if (isLoading || !checkFirebaseLoaded()) return;
+        if (isLoading || typeof firebase === 'undefined') return;
         
         try {
             isLoading = true;
@@ -721,7 +711,7 @@ document.head.appendChild(style);
 
 // Глобальные функции для редактирования и удаления персонажей
 window.editCharacter = async function(characterId) {
-    if (!checkFirebaseLoaded()) return;
+    if (typeof firebase === 'undefined') return;
     
     try {
         // Получаем данные персонажа
@@ -765,7 +755,7 @@ window.editCharacter = async function(characterId) {
 };
 
 window.deleteCharacter = async function(characterId, characterName) {
-    if (!checkFirebaseLoaded()) return;
+    if (typeof firebase === 'undefined') return;
     
     try {
         // Получаем данные персонажа для проверки прав
