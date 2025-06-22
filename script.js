@@ -717,40 +717,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
     console.log('Бургер-меню элементы:', { burgerMenuBtn, burgerMenu, closeBurgerMenu });
 
-    if (burgerMenuBtn && burgerMenu && closeBurgerMenu) {
-        burgerMenuBtn.onclick = () => {
-            console.log('Клик по бургер-меню');
+    // Функция открытия бургер-меню
+    function openBurgerMenu() {
+        console.log('Открытие бургер-меню');
+        if (burgerMenu) {
             const user = firebase.auth().currentUser;
-            if (user) {
+            if (user && burgerUserEmail) {
                 burgerUserEmail.textContent = user.email;
             }
             burgerMenu.classList.add('show');
             console.log('Класс show добавлен');
-        };
-        closeBurgerMenu.onclick = () => {
-            console.log('Закрытие бургер-меню');
-            burgerMenu.classList.remove('show');
-        };
-        // Клик вне меню
-        window.addEventListener('click', function(event) {
-            if (event.target === burgerMenu) {
-                console.log('Клик вне бургер-меню');
-                burgerMenu.classList.remove('show');
-            }
-        });
-    } else {
-        console.error('Не найдены элементы бургер-меню:', { burgerMenuBtn, burgerMenu, closeBurgerMenu });
+        }
     }
 
-    // --- Выход через бургер-меню ---
-    const burgerLogoutBtn = document.querySelector('.logout-btn');
-    if (burgerLogoutBtn) {
-        burgerLogoutBtn.onclick = async function() {
-            await firebase.auth().signOut();
-            if (burgerMenu) burgerMenu.classList.remove('show');
-            alert('Вы вышли из аккаунта');
-        };
+    // Функция закрытия бургер-меню
+    function closeBurgerMenuFunc() {
+        console.log('Закрытие бургер-меню');
+        if (burgerMenu) {
+            burgerMenu.classList.remove('show');
+        }
     }
+
+    if (burgerMenuBtn) {
+        // Добавляем несколько способов обработки клика
+        burgerMenuBtn.addEventListener('click', openBurgerMenu);
+        burgerMenuBtn.onclick = openBurgerMenu;
+        console.log('Обработчик клика добавлен к бургер-меню');
+    }
+
+    if (closeBurgerMenu) {
+        closeBurgerMenu.addEventListener('click', closeBurgerMenuFunc);
+        closeBurgerMenu.onclick = closeBurgerMenuFunc;
+        console.log('Обработчик закрытия добавлен');
+    }
+
+    // Клик вне меню
+    document.addEventListener('click', function(event) {
+        if (event.target === burgerMenu) {
+            console.log('Клик вне бургер-меню');
+            closeBurgerMenuFunc();
+        }
+    });
+
+    // Добавляем обработчик для кнопки выхода в бургер-меню
+    document.addEventListener('click', function(event) {
+        if (event.target.closest('.burger-menu-item.logout-btn')) {
+            console.log('Выход через бургер-меню');
+            firebase.auth().signOut().then(() => {
+                closeBurgerMenuFunc();
+                alert('Вы вышли из аккаунта');
+            }).catch((error) => {
+                console.error('Ошибка выхода:', error);
+                alert('Ошибка при выходе: ' + error.message);
+            });
+        }
+    });
 
     // Функция для проверки пользователей (для отладки)
     window.checkUsers = async function() {

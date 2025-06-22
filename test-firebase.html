@@ -9,8 +9,11 @@
     <h1>Тест Firebase</h1>
     <div id="status">Проверка...</div>
     <br>
-    <button onclick="checkUsers()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+    <button onclick="checkUsers()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer; margin-right: 10px;">
         Проверить зарегистрированных пользователей
+    </button>
+    <button onclick="testBurgerMenu()" style="padding: 10px 20px; background: #ff6b6b; color: white; border: none; border-radius: 5px; cursor: pointer;">
+        Тест бургер-меню
     </button>
     
     <!-- Firebase -->
@@ -86,6 +89,30 @@
             } catch (e) {
                 console.error('Ошибка при получении пользователей:', e);
                 alert('Ошибка при получении пользователей: ' + e.message);
+            }
+        };
+        
+        // Функция для тестирования бургер-меню
+        window.testBurgerMenu = function() {
+            const burgerMenuBtn = document.getElementById('burgerMenuBtn');
+            const burgerMenu = document.getElementById('burgerMenu');
+            
+            console.log('Тест бургер-меню:', { burgerMenuBtn, burgerMenu });
+            
+            if (burgerMenuBtn) {
+                console.log('Кнопка бургер-меню найдена');
+                burgerMenuBtn.click();
+            } else {
+                console.log('Кнопка бургер-меню не найдена');
+            }
+            
+            if (burgerMenu) {
+                console.log('Меню найдено, классы:', burgerMenu.className);
+                setTimeout(() => {
+                    console.log('Классы после клика:', burgerMenu.className);
+                }, 100);
+            } else {
+                console.log('Меню не найдено');
             }
         };
     </script>
