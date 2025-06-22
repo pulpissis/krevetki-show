@@ -1238,16 +1238,18 @@ body::before { display: none !important; }
 
 /* Стили для галереи просмотра */
 .gallery-modal .modal-content {
-    max-width: 90vw;
-    max-height: 90vh;
+    max-width: 95vw;
+    max-height: 95vh;
     width: 1200px;
     height: 800px;
+    padding: 20px;
 }
 
 .gallery-content {
     display: flex;
     flex-direction: column;
     height: 100%;
+    gap: 20px;
 }
 
 .gallery-container {
@@ -1263,6 +1265,7 @@ body::before { display: none !important; }
     gap: 20px;
     flex: 1;
     min-height: 400px;
+    max-height: 600px;
 }
 
 .gallery-nav {
@@ -1279,6 +1282,7 @@ body::before { display: none !important; }
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    z-index: 10;
 }
 
 .gallery-nav:hover {
@@ -1299,19 +1303,25 @@ body::before { display: none !important; }
     align-items: center;
     gap: 15px;
     height: 100%;
+    max-height: 600px;
+    overflow: hidden;
 }
 
 #galleryMainImage {
     max-width: 100%;
-    max-height: 400px;
+    max-height: 500px;
+    width: auto;
+    height: auto;
     object-fit: contain;
     border-radius: var(--radius);
     box-shadow: var(--shadow);
+    background: #f5f5f5;
 }
 
 .gallery-image-info {
     text-align: center;
     max-width: 600px;
+    padding: 10px;
 }
 
 .gallery-image-info h3 {
@@ -1331,6 +1341,7 @@ body::before { display: none !important; }
     overflow-x: auto;
     padding: 10px 0;
     max-height: 120px;
+    justify-content: center;
 }
 
 .thumbnail {
@@ -1342,6 +1353,7 @@ body::before { display: none !important; }
     border: 2px solid transparent;
     transition: all 0.3s ease;
     flex-shrink: 0;
+    background: #f5f5f5;
 }
 
 .thumbnail:hover {
@@ -1375,13 +1387,15 @@ body::before { display: none !important; }
     }
     
     .gallery-modal .modal-content {
-        width: 95vw;
-        height: 90vh;
+        width: 98vw;
+        height: 95vh;
+        padding: 15px;
     }
     
     .gallery-main {
         flex-direction: column;
         gap: 15px;
+        max-height: 70vh;
     }
     
     .gallery-nav {
@@ -1390,8 +1404,18 @@ body::before { display: none !important; }
         font-size: 1em;
     }
     
+    .gallery-image-container {
+        max-height: 50vh;
+    }
+    
+    #galleryMainImage {
+        max-height: 40vh;
+        max-width: 90vw;
+    }
+    
     .gallery-thumbnails {
         max-height: 100px;
+        padding: 5px 0;
     }
     
     .thumbnail {

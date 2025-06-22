@@ -30,25 +30,25 @@
     </script>
 
     <header>
-        <h1><i class="fas fa-anchor"></i> Креветки шоу!</h1>
-        <p class="subtitle">Тест галереи артов</p>
+        <h1><i class="fas fa-anchor"></i> Тест галереи</h1>
+        <p class="subtitle">Отладка галереи изображений</p>
     </header>
 
     <div class="character-detail-container">
-        <div class="back-button" onclick="window.location.href='index.html'">
-            <i class="fas fa-arrow-left"></i> Назад к галерее
+        <div class="back-button" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Назад
         </div>
 
         <div class="character-detail">
             <div class="character-detail-card">
                 <div class="character-header">
                     <div class="character-portrait">
-                        <img src="https://via.placeholder.com/200x200/0077b6/ffffff?text=Тест" alt="Тестовый персонаж" class="avatar-image">
+                        <img src="https://via.placeholder.com/200x300/0077B6/FFFFFF?text=Аватарка" alt="Тест" class="avatar-image" onclick="openGallery(0)">
                     </div>
                     <div class="character-info">
                         <h1>Тестовый персонаж</h1>
                         <div class="character-meta">
-                            <span class="character-type">Креветка</span>
+                            <span class="character-type">Русалка</span>
                             <span class="character-gender">Женский</span>
                         </div>
                         <p class="character-author">Автор: test@example.com</p>
@@ -57,34 +57,34 @@
                 
                 <div class="character-content">
                     <div class="character-section">
-                        <h3><i class="fas fa-info-circle"></i> Описание</h3>
-                        <p>Это тестовый персонаж для проверки работы галереи артов.</p>
+                        <h3><i class="fas fa-image"></i> Изображения</h3>
+                        <div class="character-images">
+                            <div class="image-item">
+                                <h4>Аватарка</h4>
+                                <img src="https://via.placeholder.com/200x300/0077B6/FFFFFF?text=Аватарка" alt="Аватарка" class="detail-image" onclick="openGallery(0)">
+                            </div>
+                            <div class="image-item">
+                                <h4>Основной арт</h4>
+                                <img src="https://via.placeholder.com/400x300/FF6B6B/FFFFFF?text=Основной+арт" alt="Арт" class="detail-image" onclick="openGallery(1)">
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="character-section">
-                        <div class="arts-header">
-                            <h3><i class="fas fa-images"></i> Галерея артов</h3>
-                            <button class="upload-art-btn" onclick="openUploadModal()">
-                                <i class="fas fa-plus"></i> Добавить арт
-                            </button>
-                        </div>
-                        <div class="arts-gallery">
-                            <div class="arts-grid">
-                                <div class="art-item" onclick="openGallery(0)">
-                                    <img src="https://via.placeholder.com/200x150/00b4d8/ffffff?text=Арт+1" alt="Тестовый арт 1" class="art-image">
-                                    <div class="art-info">
-                                        <div class="art-title">Тестовый арт 1</div>
-                                        <div class="art-description">Описание первого арта</div>
-                                        <div class="art-author">test@example.com</div>
-                                    </div>
+                        <h3><i class="fas fa-images"></i> Дополнительные арты</h3>
+                        <div class="arts-grid">
+                            <div class="art-item" onclick="openGallery(2)">
+                                <img src="https://via.placeholder.com/150x200/4ECDC4/FFFFFF?text=Арт+1" alt="Арт 1" class="art-image">
+                                <div class="art-info">
+                                    <h4 class="art-title">Тестовый арт 1</h4>
+                                    <p class="art-description">Описание арта</p>
                                 </div>
-                                <div class="art-item" onclick="openGallery(1)">
-                                    <img src="https://via.placeholder.com/200x150/48CAE4/ffffff?text=Арт+2" alt="Тестовый арт 2" class="art-image">
-                                    <div class="art-info">
-                                        <div class="art-title">Тестовый арт 2</div>
-                                        <div class="art-description">Описание второго арта</div>
-                                        <div class="art-author">test@example.com</div>
-                                    </div>
+                            </div>
+                            <div class="art-item" onclick="openGallery(3)">
+                                <img src="https://via.placeholder.com/150x200/45B7D1/FFFFFF?text=Арт+2" alt="Арт 2" class="art-image">
+                                <div class="art-info">
+                                    <h4 class="art-title">Тестовый арт 2</h4>
+                                    <p class="art-description">Описание арта</p>
                                 </div>
                             </div>
                         </div>
@@ -94,41 +94,8 @@
         </div>
     </div>
 
-    <!-- Модальное окно для загрузки артов -->
-    <div id="uploadArtModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2><i class="fas fa-upload"></i> Загрузить новый арт</h2>
-                <span class="close" onclick="closeUploadModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="uploadArtForm">
-                    <div class="form-group">
-                        <label for="artTitle">Название арта:</label>
-                        <input type="text" id="artTitle" name="artTitle" required placeholder="Введите название арта">
-                    </div>
-                    <div class="form-group">
-                        <label for="artDescription">Описание:</label>
-                        <textarea id="artDescription" name="artDescription" placeholder="Описание арта (необязательно)"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="artFile">Выберите изображение:</label>
-                        <input type="file" id="artFile" name="artFile" accept="image/*" required>
-                        <div id="artPreview" class="image-preview"></div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="button" onclick="closeUploadModal()" class="cancel-btn">Отмена</button>
-                        <button type="submit" class="submit-btn">
-                            <i class="fas fa-upload"></i> Загрузить арт
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <!-- Модальное окно для просмотра галереи -->
-    <div id="galleryModal" class="modal gallery-modal">
+    <div id="galleryModal" class="modal gallery-modal" style="display: none;">
         <div class="modal-content gallery-content">
             <div class="modal-header">
                 <h2><i class="fas fa-images"></i> Галерея артов</h2>
@@ -162,79 +129,62 @@
     <script>
         // Тестовые данные
         const testImages = [
-            { url: 'https://via.placeholder.com/400x300/0077b6/ffffff?text=Аватарка', title: 'Аватарка', description: 'Тестовый персонаж' },
-            { url: 'https://via.placeholder.com/400x300/00b4d8/ffffff?text=Основной+арт', title: 'Основной арт', description: 'Тестовый персонаж' },
-            { url: 'https://via.placeholder.com/400x300/48CAE4/ffffff?text=Арт+1', title: 'Тестовый арт 1', description: 'Описание первого арта' },
-            { url: 'https://via.placeholder.com/400x300/4DB6AC/ffffff?text=Арт+2', title: 'Тестовый арт 2', description: 'Описание второго арта' }
+            { url: 'https://via.placeholder.com/400x600/0077B6/FFFFFF?text=Аватарка', title: 'Аватарка', description: 'Тестовый персонаж' },
+            { url: 'https://via.placeholder.com/600x400/FF6B6B/FFFFFF?text=Основной+арт', title: 'Основной арт', description: 'Тестовый персонаж' },
+            { url: 'https://via.placeholder.com/500x700/4ECDC4/FFFFFF?text=Арт+1', title: 'Тестовый арт 1', description: 'Описание арта' },
+            { url: 'https://via.placeholder.com/500x700/45B7D1/FFFFFF?text=Арт+2', title: 'Тестовый арт 2', description: 'Описание арта' }
         ];
         
         let currentImageIndex = 0;
-
-        // Функции для модальных окон
-        function openUploadModal() {
-            document.getElementById('uploadArtModal').style.display = 'block';
-            setupUploadForm();
+        
+        function goBack() {
+            window.history.back();
         }
-
-        function closeUploadModal() {
-            document.getElementById('uploadArtModal').style.display = 'none';
-            document.getElementById('uploadArtForm').reset();
-            document.getElementById('artPreview').innerHTML = '';
-        }
-
-        function setupUploadForm() {
-            const form = document.getElementById('uploadArtForm');
-            const fileInput = document.getElementById('artFile');
-            const preview = document.getElementById('artPreview');
-
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                alert('Функция загрузки в тестовом режиме');
-                closeUploadModal();
-            });
-        }
-
+        
         function openGallery(startIndex = 0) {
+            console.log('Открытие галереи с индексом:', startIndex);
+            
             currentImageIndex = startIndex;
-            document.getElementById('galleryModal').style.display = 'block';
-            updateGalleryView();
-            renderGalleryThumbnails();
+            
+            if (currentImageIndex >= testImages.length) {
+                currentImageIndex = 0;
+            }
+            
+            const galleryModal = document.getElementById('galleryModal');
+            if (galleryModal) {
+                galleryModal.style.display = 'block';
+                updateGalleryView();
+                renderGalleryThumbnails();
+            }
         }
-
+        
         function closeGalleryModal() {
-            document.getElementById('galleryModal').style.display = 'none';
+            const modal = document.getElementById('galleryModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
         }
-
+        
         function updateGalleryView() {
             const mainImage = document.getElementById('galleryMainImage');
             const title = document.getElementById('galleryImageTitle');
             const description = document.getElementById('galleryImageDescription');
-
+            
             if (currentImageIndex >= 0 && currentImageIndex < testImages.length) {
                 const image = testImages[currentImageIndex];
                 mainImage.src = image.url;
                 title.textContent = image.title;
                 description.textContent = image.description;
             }
-
+            
+            // Обновляем состояние кнопок навигации
             const prevBtn = document.querySelector('.gallery-nav.prev');
             const nextBtn = document.querySelector('.gallery-nav.next');
             
             prevBtn.disabled = currentImageIndex <= 0;
             nextBtn.disabled = currentImageIndex >= testImages.length - 1;
         }
-
+        
         function renderGalleryThumbnails() {
             const thumbnailsContainer = document.getElementById('galleryThumbnails');
             
@@ -245,13 +195,13 @@
                      onclick="goToImage(${index})">
             `).join('');
         }
-
+        
         function goToImage(index) {
             currentImageIndex = index;
             updateGalleryView();
             renderGalleryThumbnails();
         }
-
+        
         function nextImage() {
             if (currentImageIndex < testImages.length - 1) {
                 currentImageIndex++;
@@ -259,7 +209,7 @@
                 renderGalleryThumbnails();
             }
         }
-
+        
         function previousImage() {
             if (currentImageIndex > 0) {
                 currentImageIndex--;
@@ -267,19 +217,24 @@
                 renderGalleryThumbnails();
             }
         }
-
-        // Закрытие модальных окон при клике вне их
+        
+        // Закрытие модального окна при клике вне его
         window.onclick = function(event) {
-            const uploadModal = document.getElementById('uploadArtModal');
             const galleryModal = document.getElementById('galleryModal');
-            
-            if (event.target === uploadModal) {
-                closeUploadModal();
-            }
             if (event.target === galleryModal) {
                 closeGalleryModal();
             }
         }
+        
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const galleryModal = document.getElementById('galleryModal');
+                if (galleryModal && galleryModal.style.display === 'block') {
+                    closeGalleryModal();
+                }
+            }
+        });
     </script>
 
     <div class="bubbles">
@@ -293,4 +248,5 @@
         <div class="bubble"></div>
     </div>
 </body>
+</html> 
 </html> 
