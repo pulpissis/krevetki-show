@@ -1493,7 +1493,7 @@ body::before { display: none !important; }
 
 .gallery-main-image {
     max-width: 85%;
-    max-height: 75vh;
+    max-height: 50vh;
     width: auto;
     height: auto;
     object-fit: contain;
