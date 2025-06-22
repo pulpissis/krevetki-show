@@ -605,49 +605,6 @@ async function deleteArt(artId, artTitle) {
     }
 }
 
-// Функции навигации по галерее
-function previousImage() {
-    const allImages = [
-        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
-        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
-    ];
-    
-    characterArts.forEach(art => {
-        allImages.push({
-            url: art.imageUrl,
-            title: art.title,
-            description: art.description || ''
-        });
-    });
-
-    if (allImages.length === 0) return;
-    
-    currentImageIndex = (currentImageIndex - 1 + allImages.length) % allImages.length;
-    updateGalleryView(allImages);
-    renderGalleryThumbnails(allImages);
-}
-
-function nextImage() {
-    const allImages = [
-        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
-        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
-    ];
-    
-    characterArts.forEach(art => {
-        allImages.push({
-            url: art.imageUrl,
-            title: art.title,
-            description: art.description || ''
-        });
-    });
-
-    if (allImages.length === 0) return;
-    
-    currentImageIndex = (currentImageIndex + 1) % allImages.length;
-    updateGalleryView(allImages);
-    renderGalleryThumbnails(allImages);
-}
-
 // Глобальные функции для модальных окон
 window.openUploadModal = openUploadModal;
 window.closeUploadModal = closeUploadModal;
@@ -655,8 +612,6 @@ window.openGallery = openGallery;
 window.closeGalleryModal = closeGalleryModal;
 window.goToImage = goToImage;
 window.deleteArt = deleteArt;
-window.previousImage = previousImage;
-window.nextImage = nextImage;
 
 // Закрытие модальных окон при клике вне их
 window.onclick = function(event) {
