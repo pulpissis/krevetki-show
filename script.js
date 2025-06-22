@@ -3,6 +3,14 @@ const characters = [];
 // Получаем элементы интерфейса
 const searchInput = document.querySelector('.search-input');
 
+// Функция для обрезки длинного текста
+function truncateText(text, maxLength = 120) {
+    if (!text || text.length <= maxLength) {
+        return text;
+    }
+    return text.substring(0, maxLength).trim() + '...';
+}
+
 function createCharacterCard(character) {
     const card = document.createElement('div');
     card.className = 'character-card';
@@ -20,6 +28,9 @@ function createCharacterCard(character) {
         currentUserRole === 'admin'
     );
 
+    // Обрезаем описание для карточки
+    const truncatedDescription = truncateText(character.description || 'Описание не указано', 120);
+
     card.innerHTML = `
     <div class="card-image-container">
       <img src="${character.avatarUrl}" alt="${character.name}">
@@ -27,7 +38,7 @@ function createCharacterCard(character) {
     </div>
     <div class="card-content">
       <h3>${character.name}</h3>
-      <p class="character-description">${character.description || '<Описание>'}</p>
+      <p class="character-description">${truncatedDescription}</p>
       <div class="character-skills">
         <h4><i class="fas fa-star"></i> Характеристики:</h4>
         <ul>
