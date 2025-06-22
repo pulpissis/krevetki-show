@@ -782,13 +782,68 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         try {
+            const currentUser = firebase.auth().currentUser;
+            if (!currentUser) {
+                alert('Необходимо войти в аккаунт');
+                return;
+            }
+            
+            // Получаем текущее имя пользователя
+            const currentAuthorName = currentUser.displayName || currentUser.email.split('@')[0];
+            
             const charactersSnapshot = await firebase.firestore().collection('characters').get();
             let updatedCount = 0;
             
             for (const doc of charactersSnapshot.docs) {
                 const character = doc.data();
                 
-                // Если у персонажа нет authorName, добавляем его
+                // Обновляем только персонажей текущего пользователя
+                if (character.authorId === currentUser.uid) {
+                    await firebase.firestore().collection('characters').doc(doc.id).update({
+                        authorName: currentAuthorName
+                    });
+                    updatedCount++;
+                }
+            }
+            
+            alert(`Обновлено ваших персонажей: ${updatedCount}`);
+            
+            // Перезагружаем галерею
+            loadCharacters();
+            
+        } catch (e) {
+            console.error('Ошибка при обновлении персонажей:', e);
+            alert('Ошибка при обновлении персонажей: ' + e.message);
+        }
+    };
+
+    // Функция для обновления всех персонажей (только для администраторов)
+    window.updateAllCharacters = async function() {
+        if (typeof firebase === 'undefined') {
+            alert('Firebase не загружен');
+            return;
+        }
+        
+        try {
+            const currentUser = firebase.auth().currentUser;
+            if (!currentUser) {
+                alert('Необходимо войти в аккаунт');
+                return;
+            }
+            
+            // Проверяем права администратора
+            if (window.currentUserRole !== 'admin') {
+                alert('Эта функция доступна только администраторам');
+                return;
+            }
+            
+            const charactersSnapshot = await firebase.firestore().collection('characters').get();
+            let updatedCount = 0;
+            
+            for (const doc of charactersSnapshot.docs) {
+                const character = doc.data();
+                
+                // Если у персонажа нет authorName, добавляем его из email
                 if (!character.authorName && character.authorEmail) {
                     const authorName = character.authorEmail.split('@')[0];
                     await firebase.firestore().collection('characters').doc(doc.id).update({
@@ -798,14 +853,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            alert(`Обновлено персонажей: ${updatedCount}`);
+            alert(`Обновлено всех персонажей: ${updatedCount}`);
             
             // Перезагружаем галерею
             loadCharacters();
             
         } catch (e) {
-            console.error('Ошибка при обновлении персонажей:', e);
-            alert('Ошибка при обновлении персонажей: ' + e.message);
+            console.error('Ошибка при обновлении всех персонажей:', e);
+            alert('Ошибка при обновлении всех персонажей: ' + e.message);
         }
     };
 });
