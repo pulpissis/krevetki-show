@@ -1422,10 +1422,9 @@ body::before { display: none !important; }
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.9);
     display: none;
     z-index: 9999;
-    backdrop-filter: blur(5px);
 }
 
 .gallery-modal .modal-content {
@@ -1479,7 +1478,6 @@ body::before { display: none !important; }
 
 .gallery-header .close:hover {
     background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.1);
 }
 
 .gallery-body {
@@ -1501,8 +1499,8 @@ body::before { display: none !important; }
 
 .gallery-image-container {
     position: relative;
-    max-width: 80%;
-    max-height: 70vh;
+    max-width: 60%;
+    max-height: 50vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1514,14 +1512,8 @@ body::before { display: none !important; }
     width: auto;
     height: auto;
     object-fit: contain;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
-    transition: all 0.3s ease;
-}
-
-.gallery-main-image:hover {
-    transform: scale(1.02);
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 .gallery-nav {
@@ -1531,27 +1523,20 @@ body::before { display: none !important; }
     background: rgba(0, 0, 0, 0.7);
     color: white;
     border: none;
-    width: 50px;
-    height: 80px;
+    width: 40px;
+    height: 60px;
     cursor: pointer;
-    font-size: 1.5em;
+    font-size: 1.2em;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.3s;
     z-index: 10;
-    border-radius: 8px;
+    border-radius: 6px;
 }
 
 .gallery-nav:hover {
     background: rgba(0, 119, 182, 0.8);
-    transform: translateY(-50%) scale(1.05);
-}
-
-.gallery-nav:disabled {
-    background: rgba(100, 100, 100, 0.3);
-    cursor: not-allowed;
-    transform: translateY(-50%) scale(1);
 }
 
 .gallery-nav.prev {
@@ -1573,21 +1558,21 @@ body::before { display: none !important; }
 
 .gallery-info h3 {
     margin: 0 0 8px 0;
-    font-size: 1.3em;
+    font-size: 1.2em;
     color: #0077B6;
 }
 
 .gallery-info p {
     margin: 0;
     color: #ccc;
-    line-height: 1.5;
-    font-size: 0.95em;
+    line-height: 1.4;
+    font-size: 0.9em;
 }
 
 .gallery-thumbnails {
     display: flex;
-    gap: 10px;
-    padding: 15px;
+    gap: 8px;
+    padding: 10px;
     background: rgba(0, 0, 0, 0.7);
     border-radius: 8px;
     overflow-x: auto;
@@ -1596,10 +1581,10 @@ body::before { display: none !important; }
 }
 
 .gallery-thumbnail {
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
-    border-radius: 6px;
+    border-radius: 4px;
     cursor: pointer;
     border: 2px solid transparent;
     transition: all 0.3s;
@@ -1608,13 +1593,12 @@ body::before { display: none !important; }
 
 .gallery-thumbnail:hover {
     border-color: #0077B6;
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .gallery-thumbnail.active {
     border-color: #0077B6;
-    box-shadow: 0 0 15px rgba(0, 119, 182, 0.6);
-    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.5);
 }
 
 /* Мобильная версия галереи */
@@ -1638,14 +1622,14 @@ body::before { display: none !important; }
     }
     
     .gallery-image-container {
-        max-width: 90%;
-        max-height: 60vh;
+        max-width: 85%;
+        max-height: 40vh;
     }
     
     .gallery-nav {
-        width: 40px;
-        height: 60px;
-        font-size: 1.2em;
+        width: 35px;
+        height: 50px;
+        font-size: 1em;
     }
     
     .gallery-nav.prev {
@@ -1657,7 +1641,7 @@ body::before { display: none !important; }
     }
     
     .gallery-info {
-        padding: 12px 15px;
+        padding: 10px 15px;
         margin-bottom: 10px;
     }
     
@@ -1666,13 +1650,13 @@ body::before { display: none !important; }
     }
     
     .gallery-thumbnails {
-        gap: 8px;
-        padding: 10px;
+        gap: 6px;
+        padding: 8px;
     }
     
     .gallery-thumbnail {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
     }
 }
 
