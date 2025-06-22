@@ -601,6 +601,16 @@
         function loadProfileData(user) {
             document.getElementById('profileName').textContent = user.displayName || user.email.split('@')[0];
             document.getElementById('profileEmail').textContent = user.email;
+            
+            // Обновляем аватар
+            const profileAvatar = document.querySelector('.profile-avatar');
+            if (user.photoURL) {
+                // Если есть аватарка, показываем изображение
+                profileAvatar.innerHTML = `<img src="${user.photoURL}" alt="Аватар" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            } else {
+                // Если нет аватарки, показываем иконку
+                profileAvatar.innerHTML = '<i class="fas fa-user"></i>';
+            }
         }
         
         // Загружаем персонажей пользователя
@@ -1019,8 +1029,8 @@
                         });
                     }
                     
-                    // Обновляем отображение в профиле
-                    document.getElementById('profileName').textContent = displayName || user.email.split('@')[0];
+                    // Перезагружаем профиль с обновленными данными
+                    loadProfileData(user);
                     
                     alert('Настройки профиля успешно сохранены!');
                     settingsModal.style.display = 'none';
