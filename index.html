@@ -60,28 +60,16 @@
         </div>
         
         <!-- Кнопка профиля -->
-        <div id="profileBtn" class="profile-btn" style="display: none;">
+        <a id="profileBtn" class="profile-btn" href="profile.html" style="display: none;">
             <i class="fas fa-user-circle"></i>
             <span class="profile-text">Профиль</span>
-        </div>
+        </a>
         
-        <!-- Выпадающее меню профиля -->
-        <div id="profileDropdown" class="profile-dropdown">
-            <div class="profile-dropdown-content">
-                <div class="profile-header">
-                    <i class="fas fa-user-circle"></i>
-                    <span id="profileUserEmail" class="profile-user-email"></span>
-                </div>
-                <div class="profile-menu-items">
-                    <button id="addCharacterBtn" class="profile-menu-item">
-                        <i class="fas fa-plus"></i> Добавить персонажа
-                    </button>
-                    <button class="profile-menu-item logout-btn">
-                        <i class="fas fa-sign-out-alt"></i> Выйти
-                    </button>
-                </div>
-            </div>
-        </div>
+        <!-- Кнопка добавить персонажа -->
+        <button id="addCharacterBtn" class="add-character-btn" style="display: none;">
+            <i class="fas fa-plus"></i>
+            <span class="add-character-text">Добавить персонажа</span>
+        </button>
         
         <!-- Тестовая кнопка для отладки -->
         <button id="testProfileBtn" style="position: fixed; top: 80px; right: 20px; z-index: 10000; background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">

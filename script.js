@@ -283,7 +283,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const userInfo = document.getElementById('userInfo');
         const userEmail = document.getElementById('userEmail');
         const profileBtn = document.getElementById('profileBtn');
-        const profileDropdown = document.getElementById('profileDropdown');
+        const addCharacterBtn = document.getElementById('addCharacterBtn');
         
         if (user) {
             // Пользователь вошёл
@@ -292,6 +292,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loginBtn.style.display = 'none';
             registerBtn.style.display = 'none';
             if (profileBtn) profileBtn.style.display = 'flex';
+            if (addCharacterBtn) addCharacterBtn.style.display = 'flex';
         } else {
             // Пользователь вышел
             userInfo.style.display = 'none';
@@ -299,7 +300,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loginBtn.style.display = '';
             registerBtn.style.display = '';
             if (profileBtn) profileBtn.style.display = 'none';
-            if (profileDropdown) profileDropdown.classList.remove('show');
+            if (addCharacterBtn) addCharacterBtn.style.display = 'none';
         }
     }
     // --- Получение роли пользователя ---
@@ -345,19 +346,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Модальное окно добавления персонажа ---
     const addCharacterModal = document.getElementById('addCharacterModal');
     const closeAddCharacter = document.getElementById('closeAddCharacter');
-    const addCharacterBtn = document.getElementById('addCharacterBtn');
-
-    // Открытие модалки добавления персонажа
-    if (addCharacterBtn) {
-        addCharacterBtn.onclick = () => {
-            if (typeof firebase === 'undefined') return;
-            if (!firebase.auth().currentUser) {
-                alert('Сначала войдите в аккаунт!');
-                return;
-            }
-            addCharacterModal.style.display = 'flex';
-        };
-    }
 
     // Закрытие модалки добавления персонажа
     if (closeAddCharacter) {
@@ -709,111 +697,61 @@ document.addEventListener('DOMContentLoaded', function() {
     // Загружаем персонажей при загрузке страницы
     loadCharacters();
 
-    // --- Кнопка профиля ---
+    // --- Кнопки профиля и добавления персонажа ---
     const profileBtn = document.getElementById('profileBtn');
-    const profileDropdown = document.getElementById('profileDropdown');
-    const profileUserEmail = document.getElementById('profileUserEmail');
+    const addCharacterBtn = document.getElementById('addCharacterBtn');
 
-    console.log('Кнопка профиля элементы:', { 
+    console.log('Кнопки элементы:', { 
         profileBtn: profileBtn, 
-        profileDropdown: profileDropdown,
+        addCharacterBtn: addCharacterBtn,
         profileBtnExists: !!profileBtn,
-        profileDropdownExists: !!profileDropdown
+        addCharacterBtnExists: !!addCharacterBtn
     });
 
-    // Функция открытия меню профиля
-    function openProfileDropdown(event) {
-        console.log('Открытие меню профиля', event);
-        event.preventDefault();
-        event.stopPropagation();
+    // Обработчик для кнопки "Добавить персонажа"
+    if (addCharacterBtn) {
+        console.log('Добавляем обработчик к кнопке "Добавить персонажа"');
         
-        if (profileDropdown) {
-            const user = firebase.auth().currentUser;
-            if (user && profileUserEmail) {
-                profileUserEmail.textContent = user.email;
-            }
-            profileDropdown.classList.add('show');
-            console.log('Класс show добавлен к меню профиля');
-        } else {
-            console.error('Меню профиля не найдено!');
-        }
-    }
-
-    // Функция закрытия меню профиля
-    function closeProfileDropdown(event) {
-        console.log('Закрытие меню профиля', event);
-        if (event) {
+        addCharacterBtn.addEventListener('click', function(event) {
+            console.log('Клик по кнопке "Добавить персонажа"');
             event.preventDefault();
-            event.stopPropagation();
-        }
+            
+            if (typeof firebase === 'undefined') {
+                alert('Firebase не загружен!');
+                return;
+            }
+            
+            if (!firebase.auth().currentUser) {
+                alert('Сначала войдите в аккаунт!');
+                return;
+            }
+            
+            // Открываем модальное окно добавления персонажа
+            const addCharacterModal = document.getElementById('addCharacterModal');
+            if (addCharacterModal) {
+                addCharacterModal.style.display = 'flex';
+                console.log('Модальное окно добавления персонажа открыто');
+            } else {
+                console.error('Модальное окно добавления персонажа не найдено');
+            }
+        });
         
-        if (profileDropdown) {
-            profileDropdown.classList.remove('show');
-            console.log('Класс show удален из меню профиля');
-        }
-    }
-
-    // Добавляем обработчики для кнопки профиля
-    if (profileBtn) {
-        console.log('Добавляем обработчики к кнопке профиля');
-        
-        // Удаляем старые обработчики
-        profileBtn.removeEventListener('click', openProfileDropdown);
-        profileBtn.onclick = null;
-        
-        // Добавляем новые обработчики
-        profileBtn.addEventListener('click', openProfileDropdown, { passive: false });
-        profileBtn.addEventListener('touchstart', openProfileDropdown, { passive: false });
-        
-        // Добавляем стили для отладки
-        profileBtn.style.cursor = 'pointer';
-        profileBtn.style.pointerEvents = 'auto';
-        
-        console.log('Обработчики добавлены к кнопке профиля');
+        console.log('Обработчик добавлен к кнопке "Добавить персонажа"');
     } else {
-        console.error('Кнопка профиля не найдена!');
+        console.error('Кнопка "Добавить персонажа" не найдена!');
     }
 
-    // Клик вне меню профиля
-    document.addEventListener('click', function(event) {
-        if (profileDropdown && !profileDropdown.contains(event.target) && !profileBtn.contains(event.target)) {
-            console.log('Клик вне меню профиля');
-            closeProfileDropdown();
-        }
-    });
-
-    // Добавляем обработчик для кнопки выхода в меню профиля
-    document.addEventListener('click', function(event) {
-        if (event.target.closest('.profile-menu-item.logout-btn')) {
-            console.log('Выход через меню профиля');
-            firebase.auth().signOut().then(() => {
-                closeProfileDropdown();
-                alert('Вы вышли из аккаунта');
-            }).catch((error) => {
-                console.error('Ошибка выхода:', error);
-                alert('Ошибка при выходе: ' + error.message);
-            });
-        }
-    });
-
-    // Тестовая кнопка для отладки меню профиля
+    // Тестовая кнопка для отладки
     const testProfileBtn = document.getElementById('testProfileBtn');
     if (testProfileBtn) {
         testProfileBtn.addEventListener('click', function() {
             console.log('Тестовая кнопка нажата');
-            console.log('Состояние меню профиля:', {
+            console.log('Состояние кнопок:', {
                 profileBtn: profileBtn,
-                profileDropdown: profileDropdown,
-                profileDropdownClassList: profileDropdown ? profileDropdown.classList.toString() : 'не найдено'
+                addCharacterBtn: addCharacterBtn,
+                profileBtnDisplay: profileBtn ? profileBtn.style.display : 'не найдена',
+                addCharacterBtnDisplay: addCharacterBtn ? addCharacterBtn.style.display : 'не найдена'
             });
-            
-            // Пытаемся открыть меню профиля
-            if (profileDropdown) {
-                profileDropdown.classList.add('show');
-                console.log('Меню профиля открыто через тестовую кнопку');
-            } else {
-                console.error('Меню профиля не найдено для тестовой кнопки');
-            }
         });
     }
 

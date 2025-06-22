@@ -676,12 +676,15 @@ body::before { display: none !important; }
     z-index: 9999;
     pointer-events: auto;
     user-select: none;
+    text-decoration: none;
 }
 
 .profile-btn:hover {
     background: var(--accent);
     transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 119, 182, 0.4);
+    color: white;
+    text-decoration: none;
 }
 
 .profile-btn:active {
@@ -692,89 +695,41 @@ body::before { display: none !important; }
     display: none;
 }
 
-/* Выпадающее меню профиля */
-.profile-dropdown {
+/* Кнопка добавить персонажа */
+.add-character-btn {
     position: fixed;
-    top: 70px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.98);
-    backdrop-filter: blur(15px);
-    border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0, 119, 182, 0.3);
-    z-index: 9998;
-    transform: translateY(-20px) scale(0.95);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-    border: 2px solid var(--accent);
-    min-width: 250px;
-}
-
-.profile-dropdown.show {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-    visibility: visible;
-}
-
-.profile-dropdown-content {
-    padding: 20px;
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid var(--accent);
-    margin-bottom: 15px;
-}
-
-.profile-header i {
-    font-size: 2em;
-    color: var(--primary);
-}
-
-.profile-user-email {
-    color: var(--text-main);
-    font-weight: 600;
-    font-size: 0.9em;
-    word-break: break-word;
-}
-
-.profile-menu-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.profile-menu-item {
-    background: var(--primary);
+    top: 20px;
+    right: 140px;
+    background: var(--seagrass);
     color: white;
     border: none;
-    border-radius: 10px;
-    padding: 12px 16px;
-    font-size: 0.9em;
-    font-weight: 600;
+    border-radius: 25px;
+    padding: 12px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(77, 182, 172, 0.3);
     display: flex;
     align-items: center;
-    gap: 10px;
-    box-shadow: 0 2px 8px rgba(0, 119, 182, 0.2);
+    gap: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    z-index: 9999;
+    pointer-events: auto;
+    user-select: none;
 }
 
-.profile-menu-item:hover {
-    background: var(--accent);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+.add-character-btn:hover {
+    background: #3da89a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(77, 182, 172, 0.4);
 }
 
-.profile-menu-item.logout-btn {
-    background: var(--coral);
+.add-character-btn:active {
+    transform: translateY(0);
 }
 
-.profile-menu-item.logout-btn:hover {
-    background: #ff5252;
+.add-character-text {
+    display: none;
 }
 
 /* Модальные окна */

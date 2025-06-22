@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест кнопки профиля</title>
+    <title>Тест простых кнопок</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -42,26 +42,24 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
         }
-        .profile-dropdown-test {
+        .add-character-test {
             position: fixed;
-            top: 70px;
-            right: 20px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 8px 30px rgba(0,119,182,0.3);
-            z-index: 9998;
-            transform: translateY(-20px) scale(0.95);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            border: 2px solid #48CAE4;
-            min-width: 250px;
-        }
-        .profile-dropdown-test.show {
-            transform: translateY(0) scale(1);
-            opacity: 1;
-            visibility: visible;
+            top: 20px;
+            right: 140px;
+            background: #4DB6AC;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
     </style>
     <!-- Font Awesome -->
@@ -77,16 +75,21 @@
         .fas.fa-times::before { content: "✕"; }
         .fas.fa-plus::before { content: "+"; }
         .fas.fa-sign-out-alt::before { content: "←"; }
+        .fas.fa-arrow-left::before { content: "←"; }
     </style>
 </head>
 <body>
-    <h1>Тест кнопки профиля</h1>
+    <h1>Тест простых кнопок</h1>
     
     <div class="test-section">
         <h2>Тест иконок Font Awesome</h2>
         <div class="icon-test">
             <i class="fas fa-user-circle"></i><br>
             Профиль
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-plus"></i><br>
+            Добавить
         </div>
         <div class="icon-test">
             <i class="fas fa-search"></i><br>
@@ -105,56 +108,44 @@
             Регистрация
         </div>
         <div class="icon-test">
-            <i class="fas fa-plus"></i><br>
-            Добавить
-        </div>
-        <div class="icon-test">
             <i class="fas fa-sign-out-alt"></i><br>
             Выйти
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-arrow-left"></i><br>
+            Назад
         </div>
     </div>
 
     <div class="test-section">
-        <h2>Тест кнопки профиля</h2>
-        <p>Нажмите на кнопку профиля в правом верхнем углу</p>
-        <button onclick="testProfileDropdown()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            Тест меню профиля
+        <h2>Тест кнопок</h2>
+        <p>Нажмите на кнопки в правом верхнем углу</p>
+        <button onclick="testButtons()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Тест кнопок
         </button>
     </div>
 
-    <!-- Тестовая кнопка профиля -->
-    <button class="profile-test" onclick="toggleProfileDropdown()">
+    <!-- Тестовые кнопки -->
+    <a href="profile.html" class="profile-test">
         <i class="fas fa-user-circle"></i>
         <span>Профиль</span>
-    </button>
+    </a>
     
-    <div class="profile-dropdown-test" id="testProfileDropdown">
-        <div style="padding: 20px;">
-            <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 15px; border-bottom: 2px solid #48CAE4; margin-bottom: 15px;">
-                <i class="fas fa-user-circle" style="font-size: 2em; color: #0077b6;"></i>
-                <span style="color: #023E8A; font-weight: 600; font-size: 0.9em;">test@example.com</span>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <button style="background: #0077b6; color: white; border: none; border-radius: 10px; padding: 12px 16px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-plus"></i> Добавить персонажа
-                </button>
-                <button style="background: #FF6B6B; color: white; border: none; border-radius: 10px; padding: 12px 16px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-sign-out-alt"></i> Выйти
-                </button>
-            </div>
-        </div>
-    </div>
+    <button class="add-character-test" onclick="testAddCharacter()">
+        <i class="fas fa-plus"></i>
+        <span>Добавить персонажа</span>
+    </button>
 
     <script>
-        function toggleProfileDropdown() {
-            const dropdown = document.getElementById('testProfileDropdown');
-            dropdown.classList.toggle('show');
-            console.log('Меню профиля переключено:', dropdown.classList.contains('show'));
+        function testAddCharacter() {
+            console.log('Кнопка "Добавить персонажа" нажата');
+            alert('Эта кнопка должна открывать модальное окно добавления персонажа');
         }
 
-        function testProfileDropdown() {
-            console.log('Тест меню профиля запущен');
-            toggleProfileDropdown();
+        function testButtons() {
+            console.log('Тест кнопок запущен');
+            console.log('Кнопка профиля ведет на profile.html');
+            console.log('Кнопка "Добавить персонажа" открывает модальное окно');
         }
 
         // Проверяем загрузку Font Awesome
@@ -169,16 +160,6 @@
                 console.log('Стиль иконки:', computedStyle.content);
             } else {
                 console.log('Иконка профиля не найдена');
-            }
-        });
-
-        // Клик вне меню для закрытия
-        document.addEventListener('click', function(event) {
-            const dropdown = document.getElementById('testProfileDropdown');
-            const profileBtn = document.querySelector('.profile-test');
-            
-            if (dropdown && !dropdown.contains(event.target) && !profileBtn.contains(event.target)) {
-                dropdown.classList.remove('show');
             }
         });
     </script>

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль - Креветки Шоу</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .profile-header {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(0, 119, 182, 0.15);
+        }
+        
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 3em;
+            color: white;
+        }
+        
+        .profile-info h1 {
+            color: var(--text-main);
+            margin-bottom: 10px;
+        }
+        
+        .profile-info p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+        
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .profile-action-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .profile-action-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            z-index: 9999;
+        }
+        
+        .back-btn:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+            color: white;
+            text-decoration: none;
+        }
+        
+        .user-characters {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(0, 119, 182, 0.15);
+        }
+        
+        .user-characters h2 {
+            color: var(--text-main);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .no-characters {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1em;
+            padding: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .profile-stats {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .profile-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .back-btn {
+                top: 15px;
+                left: 15px;
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        <span>Назад</span>
+    </a>
+    
+    <div class="profile-page">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="profile-info">
+                <h1 id="profileName">Загрузка...</h1>
+                <p id="profileEmail">Загрузка...</p>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="charactersCount">0</div>
+                        <div class="stat-label">Персонажей</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="accountAge">0</div>
+                        <div class="stat-label">Дней в проекте</div>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <a href="index.html" class="profile-action-btn">
+                        <i class="fas fa-plus"></i>
+                        Добавить персонажа
+                    </a>
+                    <button id="logoutBtn" class="profile-action-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Выйти
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="user-characters">
+            <h2>Мои персонажи</h2>
+            <div id="userCharactersList">
+                <div class="no-characters">
+                    <i class="fas fa-fish" style="font-size: 3em; color: var(--accent); margin-bottom: 20px; display: block;"></i>
+                    <p>У вас пока нет персонажей</p>
+                    <p>Создайте своего первого персонажа!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase -->
+    <script src="firebase/firebase-app-compat.js"></script>
+    <script src="firebase/firebase-auth-compat.js"></script>
+    <script src="firebase/firebase-firestore-compat.js"></script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDs5ojcVcFK6zqiGRukpVHZo4HJ6MnqObg",
+            authDomain: "krevetki-show.firebaseapp.com",
+            projectId: "krevetki-show",
+            storageBucket: "krevetki-show.firebasestorage.app",
+            messagingSenderId: "836884753704",
+            appId: "1:836884753704:web:0c879b2b52e024399e741d"
+        };
+        
+        // Инициализируем Firebase
+        try {
+            firebase.initializeApp(firebaseConfig);
+            console.log('Firebase успешно инициализирован');
+        } catch (error) {
+            console.error('Ошибка инициализации Firebase:', error);
+        }
+        
+        // Проверяем авторизацию
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                console.log('Пользователь авторизован:', user.email);
+                loadProfileData(user);
+                loadUserCharacters(user.uid);
+            } else {
+                console.log('Пользователь не авторизован');
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // Загружаем данные профиля
+        function loadProfileData(user) {
+            document.getElementById('profileName').textContent = user.displayName || user.email.split('@')[0];
+            document.getElementById('profileEmail').textContent = user.email;
+            
+            // Вычисляем возраст аккаунта
+            const accountAge = Math.floor((Date.now() - user.metadata.creationTime) / (1000 * 60 * 60 * 24));
+            document.getElementById('accountAge').textContent = accountAge;
+        }
+        
+        // Загружаем персонажей пользователя
+        async function loadUserCharacters(userId) {
+            try {
+                const snapshot = await firebase.firestore()
+                    .collection('characters')
+                    .where('authorId', '==', userId)
+                    .orderBy('createdAt', 'desc')
+                    .get();
+                
+                const characters = [];
+                snapshot.forEach(doc => {
+                    characters.push({ id: doc.id, ...doc.data() });
+                });
+                
+                document.getElementById('charactersCount').textContent = characters.length;
+                
+                if (characters.length === 0) {
+                    document.getElementById('userCharactersList').innerHTML = `
+                        <div class="no-characters">
+                            <i class="fas fa-fish" style="font-size: 3em; color: var(--accent); margin-bottom: 20px; display: block;"></i>
+                            <p>У вас пока нет персонажей</p>
+                            <p>Создайте своего первого персонажа!</p>
+                        </div>
+                    `;
+                } else {
+                    renderUserCharacters(characters);
+                }
+                
+            } catch (error) {
+                console.error('Ошибка загрузки персонажей:', error);
+            }
+        }
+        
+        // Отображаем персонажей пользователя
+        function renderUserCharacters(characters) {
+            const container = document.getElementById('userCharactersList');
+            container.innerHTML = '';
+            
+            characters.forEach(character => {
+                const card = document.createElement('div');
+                card.className = 'character-card';
+                card.style.margin = '10px';
+                card.style.display = 'inline-block';
+                card.style.width = '300px';
+                
+                card.innerHTML = `
+                    <div class="card-image-container">
+                        <img src="${character.avatarUrl || character.artUrl}" alt="${character.name}" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">
+                        <span class="character-type">${character.type}</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>${character.name}</h3>
+                        <p>${character.description || 'Описание отсутствует'}</p>
+                        <div class="card-actions">
+                            <a href="character.html?id=${character.id}" class="view-btn">
+                                <i class="fas fa-eye"></i> Подробнее
+                            </a>
+                            <button class="edit-btn" onclick="editCharacter('${character.id}')">
+                                <i class="fas fa-edit"></i> Редактировать
+                            </button>
+                            <button class="delete-btn" onclick="deleteCharacter('${character.id}', '${character.name}')">
+                                <i class="fas fa-trash"></i> Удалить
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+        }
+        
+        // Кнопка выхода
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            firebase.auth().signOut().then(() => {
+                window.location.href = 'index.html';
+            }).catch((error) => {
+                console.error('Ошибка выхода:', error);
+                alert('Ошибка при выходе: ' + error.message);
+            });
+        });
+        
+        // Функции редактирования и удаления (заглушки)
+        window.editCharacter = function(characterId) {
+            alert('Функция редактирования будет добавлена позже');
+        };
+        
+        window.deleteCharacter = function(characterId, characterName) {
+            if (confirm(`Удалить персонажа "${characterName}"?`)) {
+                firebase.firestore().collection('characters').doc(characterId).delete()
+                    .then(() => {
+                        alert('Персонаж удален!');
+                        location.reload();
+                    })
+                    .catch((error) => {
+                        alert('Ошибка при удалении: ' + error.message);
+                    });
+            }
+        };
+    </script>
+</body>
+</html> 
