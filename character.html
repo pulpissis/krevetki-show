@@ -26,7 +26,13 @@
         messagingSenderId: "836884753704",
         appId: "1:836884753704:web:0c879b2b52e024399e741d"
       };
-      firebase.initializeApp(firebaseConfig);
+      
+      try {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase инициализирован успешно');
+      } catch (error) {
+        console.error('Ошибка инициализации Firebase:', error);
+      }
     </script>
 
     <header>
@@ -40,7 +46,11 @@
         </div>
 
         <div id="characterDetail" class="character-detail">
-            <!-- Здесь будет загружена информация о персонаже -->
+            <div class="loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Загрузка персонажа...</p>
+                <p id="debugInfo" style="font-size: 0.8em; color: #666;"></p>
+            </div>
         </div>
     </div>
 
@@ -117,6 +127,50 @@
             </a>
         </div>
     </footer>
+
+    <script>
+        // Простая отладочная информация
+        console.log('Страница character.html загружена');
+        console.log('URL:', window.location.href);
+        console.log('URL параметры:', window.location.search);
+        
+        // Получаем ID персонажа из URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const characterId = urlParams.get('id');
+        console.log('ID персонажа из URL:', characterId);
+        
+        // Показываем отладочную информацию на странице
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo) {
+            debugInfo.innerHTML = `
+                URL: ${window.location.href}<br>
+                ID персонажа: ${characterId || 'не найден'}<br>
+                Firebase: ${typeof firebase !== 'undefined' ? 'загружен' : 'не загружен'}
+            `;
+        }
+        
+        // Простая функция возврата
+        function goBack() {
+            window.history.back();
+        }
+        
+        // Простые функции для модальных окон (заглушки)
+        function closeUploadModal() {
+            document.getElementById('uploadArtModal').style.display = 'none';
+        }
+        
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').style.display = 'none';
+        }
+        
+        function previousImage() {
+            console.log('Предыдущее изображение');
+        }
+        
+        function nextImage() {
+            console.log('Следующее изображение');
+        }
+    </script>
 
     <script src="character-detail.js"></script>
     <div class="bubbles">

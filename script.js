@@ -38,9 +38,9 @@ function createCharacterCard(character) {
         <small>Автор: ${character.authorEmail}</small>
       </div>
       <div class="card-actions">
-        <a href="character.html?id=${character.id}" class="view-btn">
+        <button class="view-btn" onclick="viewCharacter('${character.id}')">
           <i class="fas fa-eye"></i> Подробнее
-        </a>
+        </button>
         ${canEdit ? `
         <button class="edit-btn" onclick="event.stopPropagation(); editCharacter('${character.id}')">
           <i class="fas fa-edit"></i> Редактировать
@@ -53,13 +53,13 @@ function createCharacterCard(character) {
     </div>
   `;
 
-    // Делаем всю карточку кликабельной
+    // Делаем всю карточку кликабельной (кроме кнопок действий)
     card.addEventListener('click', function(e) {
         // Не открываем детальную страницу при клике на кнопки действий
         if (e.target.closest('.card-actions')) {
             return;
         }
-        window.location.href = `character.html?id=${character.id}`;
+        viewCharacter(character.id);
     });
 
     // Добавляем стили для курсора
@@ -856,3 +856,9 @@ window.deleteCharacter = async function(characterId, characterName) {
         alert('Ошибка при удалении персонажа: ' + e.message);
     }
 };
+
+// Функция для просмотра персонажа
+function viewCharacter(characterId) {
+    console.log('Переход к персонажу:', characterId);
+    window.location.href = `character.html?id=${characterId}`;
+}
