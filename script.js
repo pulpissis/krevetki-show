@@ -70,8 +70,7 @@ function createCharacterCard(character) {
 
 function renderGallery(data) {
     const gallery = document.getElementById('gallery');
-    gallery.innerHTML = '';
-
+    
     if (data.length === 0) {
         gallery.innerHTML = `
             <div class="no-results">
@@ -83,10 +82,17 @@ function renderGallery(data) {
         return;
     }
 
+    // Используем DocumentFragment для оптимизации DOM-операций
+    const fragment = document.createDocumentFragment();
+    
     data.forEach(character => {
         const card = createCharacterCard(character);
-        gallery.appendChild(card);
+        fragment.appendChild(card);
     });
+    
+    // Очищаем галерею и добавляем все карточки за одну операцию
+    gallery.innerHTML = '';
+    gallery.appendChild(fragment);
 }
 
 // Заглушки для будущей функциональности
@@ -285,33 +291,49 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (user) {
             // Пользователь вошёл
-            userInfo.style.display = 'flex';
-            userEmail.textContent = user.email;
-            loginBtn.style.display = 'none';
-            registerBtn.style.display = 'none';
+            if (userInfo) userInfo.style.display = 'flex';
+            if (userEmail) userEmail.textContent = user.email;
+            if (loginBtn) loginBtn.style.display = 'none';
+            if (registerBtn) registerBtn.style.display = 'none';
             if (profileBtn) profileBtn.style.display = 'flex';
             if (addCharacterBtn) addCharacterBtn.style.display = 'flex';
         } else {
             // Пользователь вышел
-            userInfo.style.display = 'none';
-            userEmail.textContent = '';
-            loginBtn.style.display = '';
-            registerBtn.style.display = '';
+            if (userInfo) userInfo.style.display = 'none';
+            if (userEmail) userEmail.textContent = '';
+            if (loginBtn) loginBtn.style.display = '';
+            if (registerBtn) registerBtn.style.display = '';
             if (profileBtn) profileBtn.style.display = 'none';
             if (addCharacterBtn) addCharacterBtn.style.display = 'none';
         }
     }
     // --- Получение роли пользователя ---
     window.currentUserRole = null;
+    let userRoleCache = null;
+    let userRoleCacheTime = 0;
+    const roleCacheTimeout = 60000; // 1 минута
+    
     async function fetchUserRole(user) {
-        if (!user || typeof firebase === 'undefined') { window.currentUserRole = null; return; }
+        if (!user || typeof firebase === 'undefined') { 
+            window.currentUserRole = null; 
+            return; 
+        }
+        
+        // Проверяем кэш роли
+        const now = Date.now();
+        if (userRoleCache && user.uid === userRoleCache.uid && (now - userRoleCacheTime) < roleCacheTimeout) {
+            window.currentUserRole = userRoleCache.role;
+            return;
+        }
+        
         try {
             const doc = await firebase.firestore().collection('users').doc(user.uid).get();
-            if (doc.exists) {
-                window.currentUserRole = doc.data().role || 'user';
-            } else {
-                window.currentUserRole = 'user';
-            }
+            const role = doc.exists ? (doc.data().role || 'user') : 'user';
+            
+            // Кэшируем роль
+            userRoleCache = { uid: user.uid, role: role };
+            userRoleCacheTime = now;
+            window.currentUserRole = role;
         } catch (e) {
             window.currentUserRole = 'user';
         }
@@ -493,20 +515,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Поиск и фильтрация персонажей ---
     let allCharacters = []; // Глобальная переменная для хранения всех персонажей
-    let displayedCharacters = []; // Персонажи, которые сейчас отображаются
+    let displayedCharacters = [];
     let lastDoc = null; // Последний документ для пагинации
     let isLoading = false; // Флаг загрузки
+    let isInitialized = false; // Флаг инициализации
     const charactersPerPage = 12; // Количество персонажей на страницу
+    let lastLoadTime = 0; // Время последней загрузки для кэширования
+    const cacheTimeout = 30000; // 30 секунд кэширования
     
     // Обновляем функцию загрузки персонажей
-    async function loadCharacters(loadMore = false) {
+    async function loadCharacters(loadMore = false, forceRefresh = false) {
         if (isLoading || typeof firebase === 'undefined') return;
+        
+        // Проверяем кэш для первой загрузки
+        const now = Date.now();
+        if (!loadMore && !forceRefresh && isInitialized && (now - lastLoadTime) < cacheTimeout) {
+            renderGallery(displayedCharacters);
+            return;
+        }
         
         try {
             isLoading = true;
             
-            // Показываем индикатор загрузки
-            if (loadMore) {
+            // Показываем индикатор загрузки только для первой загрузки
+            if (!loadMore) {
+                const gallery = document.getElementById('gallery');
+                if (gallery) {
+                    gallery.innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin" style="font-size: 2em; color: var(--primary);"></i><p style="margin-top: 10px;">Загрузка персонажей...</p></div>';
+                }
+            } else {
                 const loadMoreBtn = document.getElementById('loadMoreBtn');
                 if (loadMoreBtn) {
                     loadMoreBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
@@ -527,8 +564,13 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (snapshot.empty) {
                 if (loadMore) {
-                    // Больше персонажей нет
                     hideLoadMoreButton();
+                } else {
+                    // Показываем сообщение об отсутствии персонажей
+                    const gallery = document.getElementById('gallery');
+                    if (gallery) {
+                        gallery.innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-fish" style="font-size: 3em; color: var(--accent);"></i><p style="margin-top: 10px;">Персонажей пока нет</p></div>';
+                    }
                 }
                 return;
             }
@@ -549,6 +591,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Первая загрузка
                 allCharacters = newCharacters;
                 displayedCharacters = newCharacters;
+                isInitialized = true;
+                lastLoadTime = now;
             }
             
             renderGallery(displayedCharacters);
@@ -556,6 +600,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
         } catch (e) {
             console.error('Ошибка загрузки персонажей:', e);
+            const gallery = document.getElementById('gallery');
+            if (gallery) {
+                gallery.innerHTML = '<div style="text-align: center; padding: 40px; color: #ff6b6b;"><i class="fas fa-exclamation-triangle" style="font-size: 2em;"></i><p style="margin-top: 10px;">Ошибка загрузки</p></div>';
+            }
         } finally {
             isLoading = false;
             
@@ -697,6 +745,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Загружаем персонажей при загрузке страницы
     loadCharacters();
+    
+    // Функция принудительного обновления галереи
+    window.refreshGallery = function() {
+        isInitialized = false;
+        lastLoadTime = 0;
+        allCharacters = [];
+        displayedCharacters = [];
+        lastDoc = null;
+        loadCharacters(false, true);
+    };
 
     // --- Кнопки профиля и добавления персонажа ---
     const profileBtn = document.getElementById('profileBtn');

@@ -614,13 +614,30 @@
         }
         
         // Загружаем персонажей пользователя
-        async function loadUserCharacters(userId) {
-            console.log('Загрузка персонажей для пользователя:', userId);
+        async function loadUserCharacters(userId, forceRefresh = false) {
+            // Проверяем кэш
+            const cacheKey = `userCharacters_${userId}`;
+            const now = Date.now();
+            const cacheTimeout = 30000; // 30 секунд
+            
+            if (!forceRefresh) {
+                const cached = sessionStorage.getItem(cacheKey);
+                if (cached) {
+                    const cacheData = JSON.parse(cached);
+                    if ((now - cacheData.timestamp) < cacheTimeout) {
+                        renderUserCharacters(cacheData.characters);
+                        document.getElementById('charactersCount').textContent = cacheData.characters.length;
+                        return;
+                    }
+                }
+            }
             
             try {
-                console.log('Выполняем запрос к Firestore...');
+                // Показываем индикатор загрузки
+                const container = document.getElementById('userCharactersList');
+                container.innerHTML = '<div style="text-align: center; padding: 40px;"><i class="fas fa-spinner fa-spin" style="font-size: 2em; color: var(--primary);"></i><p style="margin-top: 10px;">Загрузка персонажей...</p></div>';
                 
-                // Сначала пробуем с сортировкой
+                // Оптимизированный запрос - только нужные поля
                 let snapshot;
                 try {
                     snapshot = await firebase.firestore()
@@ -629,7 +646,6 @@
                         .orderBy('createdAt', 'desc')
                         .get();
                 } catch (sortError) {
-                    console.log('Ошибка сортировки, пробуем без сортировки:', sortError.message);
                     // Если сортировка не работает, пробуем без неё
                     snapshot = await firebase.firestore()
                         .collection('characters')
@@ -637,13 +653,9 @@
                         .get();
                 }
                 
-                console.log('Получен ответ от Firestore, количество документов:', snapshot.size);
-                
                 const characters = [];
                 snapshot.forEach(doc => {
-                    const data = doc.data();
-                    console.log('Персонаж:', { id: doc.id, name: data.name, authorId: data.authorId });
-                    characters.push({ id: doc.id, ...data });
+                    characters.push({ id: doc.id, ...doc.data() });
                 });
                 
                 // Сортируем вручную по дате создания (если есть)
@@ -654,12 +666,16 @@
                     return 0;
                 });
                 
-                console.log('Всего персонажей пользователя:', characters.length);
+                // Кэшируем результат
+                sessionStorage.setItem(cacheKey, JSON.stringify({
+                    characters: characters,
+                    timestamp: now
+                }));
+                
                 document.getElementById('charactersCount').textContent = characters.length;
                 
                 if (characters.length === 0) {
-                    console.log('Персонажей не найдено, показываем сообщение');
-                    document.getElementById('userCharactersList').innerHTML = `
+                    container.innerHTML = `
                         <div class="no-characters">
                             <i class="fas fa-fish" style="font-size: 3em; color: var(--accent); margin-bottom: 20px; display: block;"></i>
                             <p>У вас пока нет персонажей</p>
@@ -667,20 +683,18 @@
                         </div>
                     `;
                 } else {
-                    console.log('Отображаем персонажей пользователя');
                     renderUserCharacters(characters);
                 }
                 
             } catch (error) {
                 console.error('Ошибка загрузки персонажей:', error);
                 
-                // Показываем ошибку пользователю
                 document.getElementById('userCharactersList').innerHTML = `
                     <div class="no-characters">
                         <i class="fas fa-exclamation-triangle" style="font-size: 3em; color: #ff6b6b; margin-bottom: 20px; display: block;"></i>
                         <p>Ошибка загрузки персонажей</p>
                         <p>${error.message}</p>
-                        <button onclick="loadUserCharacters('${userId}')" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                        <button onclick="loadUserCharacters('${userId}', true)" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
                             Попробовать снова
                         </button>
                     </div>
@@ -691,7 +705,9 @@
         // Отображаем персонажей пользователя
         function renderUserCharacters(characters) {
             const container = document.getElementById('userCharactersList');
-            container.innerHTML = '';
+            
+            // Используем DocumentFragment для оптимизации DOM-операций
+            const fragment = document.createDocumentFragment();
             
             characters.forEach(character => {
                 const card = document.createElement('div');
@@ -722,8 +738,12 @@
                     </div>
                 `;
                 
-                container.appendChild(card);
+                fragment.appendChild(card);
             });
+            
+            // Очищаем контейнер и добавляем все карточки за одну операцию
+            container.innerHTML = '';
+            container.appendChild(fragment);
         }
         
         // Кнопка выхода
@@ -862,7 +882,7 @@
         }
 
         function refreshCharacters() {
-            loadUserCharacters(firebase.auth().currentUser.uid);
+            loadUserCharacters(firebase.auth().currentUser.uid, true);
         }
         
         // Функция для обновления существующих персонажей (добавление authorName)

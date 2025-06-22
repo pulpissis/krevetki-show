@@ -1774,3 +1774,29 @@ body::before { display: none !important; }
         margin: 8px 0;
     }
 }
+
+/* Кнопка обновления */
+.refresh-btn {
+    background: var(--accent) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 16px !important;
+    cursor: pointer !important;
+    font-size: 0.9em !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.3s ease !important;
+}
+
+.refresh-btn:hover {
+    background: var(--primary) !important;
+    transform: translateY(-2px) !important;
+}
+
+.refresh-btn:disabled {
+    background: #ccc !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
