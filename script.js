@@ -741,20 +741,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Кнопка "Добавить персонажа" не найдена!');
     }
 
-    // Тестовая кнопка для отладки
-    const testProfileBtn = document.getElementById('testProfileBtn');
-    if (testProfileBtn) {
-        testProfileBtn.addEventListener('click', function() {
-            console.log('Тестовая кнопка нажата');
-            console.log('Состояние кнопок:', {
-                profileBtn: profileBtn,
-                addCharacterBtn: addCharacterBtn,
-                profileBtnDisplay: profileBtn ? profileBtn.style.display : 'не найдена',
-                addCharacterBtnDisplay: addCharacterBtn ? addCharacterBtn.style.display : 'не найдена'
-            });
-        });
-    }
-
     // Функция для проверки пользователей (для отладки)
     window.checkUsers = async function() {
         if (typeof firebase === 'undefined') {

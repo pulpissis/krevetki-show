@@ -164,6 +164,128 @@
                 font-size: 0.9em;
             }
         }
+        
+        /* Стили для модального окна */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 119, 182, 0.3);
+            position: relative;
+        }
+
+        .modal-content h2 {
+            color: var(--text-main);
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.8em;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+            background: #fafafa;
+        }
+
+        .modal-content input:focus,
+        .modal-content select:focus,
+        .modal-content textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: white;
+        }
+
+        .modal-content textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .modal-content button:hover {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .modal-content button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close:hover {
+            color: var(--text-main);
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .form-section h3 {
+            color: var(--text-main);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .form-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
@@ -191,10 +313,10 @@
                     </div>
                 </div>
                 <div class="profile-actions">
-                    <a href="index.html" class="profile-action-btn">
+                    <button id="addCharacterBtn" class="profile-action-btn">
                         <i class="fas fa-plus"></i>
                         Добавить персонажа
-                    </a>
+                    </button>
                     <button id="logoutBtn" class="profile-action-btn">
                         <i class="fas fa-sign-out-alt"></i>
                         Выйти
@@ -212,6 +334,64 @@
                     <p>Создайте своего первого персонажа!</p>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления персонажа -->
+    <div id="addCharacterModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" id="closeAddCharacter">&times;</span>
+            <h2>Добавить персонажа</h2>
+            
+            <!-- Основная информация -->
+            <div class="form-section">
+                <h3>Основная информация</h3>
+                <input type="text" id="charName" placeholder="Имя персонажа *" required>
+                <select id="charType" required>
+                    <option value="">Выберите тип *</option>
+                    <option value="Русалка">Русалка</option>
+                    <option value="Русал">Русал</option>
+                    <option value="Сирена (ж)">Сирена (ж)</option>
+                    <option value="Сирена (м)">Сирена (м)</option>
+                    <option value="Человек (пират)">Человек (пират)</option>
+                    <option value="Ундина">Ундина</option>
+                    <option value="Рыба">Рыба</option>
+                    <option value="Другой">Другой</option>
+                </select>
+                <select id="charGender" required>
+                    <option value="">Выберите пол *</option>
+                    <option value="Женский">Женский</option>
+                    <option value="Мужской">Мужской</option>
+                    <option value="Небинарный">Небинарный</option>
+                </select>
+            </div>
+
+            <!-- Описание -->
+            <div class="form-section">
+                <h3>Описание (по желанию)</h3>
+                <textarea id="charDescription" placeholder="Описание персонажа, биография, характер..."></textarea>
+            </div>
+
+            <!-- Характеристики -->
+            <div class="form-section">
+                <h3>Характеристики (по желанию)</h3>
+                <input type="text" id="charHeight" placeholder="Рост (например: 3 метра, 175 см)">
+                <input type="text" id="charAge" placeholder="Возраст (например: 20 лет, 25)">
+                <input type="text" id="charRomance" placeholder="Романтический интерес">
+            </div>
+
+            <!-- Изображения -->
+            <div class="form-section">
+                <h3>Изображения</h3>
+                <label for="charAvatar">Аватарка (обязательно) *</label>
+                <input type="file" id="charAvatar" accept="image/*" required>
+                
+                <label for="charArt">Основной арт/референс (обязательно) *</label>
+                <input type="file" id="charArt" accept="image/*" required>
+            </div>
+
+            <button id="addCharacterSubmit">Добавить персонажа</button>
+            <p id="addCharacterError" style="color:red;"></p>
         </div>
     </div>
 
@@ -341,23 +521,129 @@
             });
         });
         
-        // Функции редактирования и удаления (заглушки)
-        window.editCharacter = function(characterId) {
-            alert('Функция редактирования будет добавлена позже');
-        };
+        // Модальное окно добавления персонажа
+        const addCharacterBtn = document.getElementById('addCharacterBtn');
+        const addCharacterModal = document.getElementById('addCharacterModal');
+        const closeAddCharacter = document.getElementById('closeAddCharacter');
+        const addCharacterSubmit = document.getElementById('addCharacterSubmit');
         
-        window.deleteCharacter = function(characterId, characterName) {
-            if (confirm(`Удалить персонажа "${characterName}"?`)) {
-                firebase.firestore().collection('characters').doc(characterId).delete()
-                    .then(() => {
-                        alert('Персонаж удален!');
-                        location.reload();
-                    })
-                    .catch((error) => {
-                        alert('Ошибка при удалении: ' + error.message);
-                    });
+        // Открытие модального окна
+        if (addCharacterBtn) {
+            addCharacterBtn.addEventListener('click', function() {
+                addCharacterModal.style.display = 'flex';
+            });
+        }
+        
+        // Закрытие модального окна
+        if (closeAddCharacter) {
+            closeAddCharacter.addEventListener('click', function() {
+                addCharacterModal.style.display = 'none';
+                document.getElementById('addCharacterError').textContent = '';
+                // Очищаем форму
+                document.getElementById('addCharacterModal').querySelectorAll('input, textarea, select').forEach(el => el.value = '');
+            });
+        }
+        
+        // Клик вне модального окна
+        window.addEventListener('click', function(event) {
+            if (event.target === addCharacterModal) {
+                addCharacterModal.style.display = 'none';
+                document.getElementById('addCharacterError').textContent = '';
             }
-        };
+        });
+        
+        // Загрузка изображения на ImgBB
+        async function uploadImageToImgBB(file) {
+            const formData = new FormData();
+            formData.append('image', file);
+            
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=2e872047678fd602dab294e858608fd4`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                return data.data.url;
+            } else {
+                throw new Error('Ошибка загрузки изображения');
+            }
+        }
+        
+        // Добавление персонажа
+        if (addCharacterSubmit) {
+            addCharacterSubmit.addEventListener('click', async function() {
+                const errorEl = document.getElementById('addCharacterError');
+                errorEl.textContent = '';
+                
+                try {
+                    // Получаем данные из формы
+                    const name = document.getElementById('charName').value.trim();
+                    const type = document.getElementById('charType').value;
+                    const gender = document.getElementById('charGender').value;
+                    const description = document.getElementById('charDescription').value.trim();
+                    const height = document.getElementById('charHeight').value.trim();
+                    const age = document.getElementById('charAge').value.trim();
+                    const romance = document.getElementById('charRomance').value.trim();
+                    const avatarFile = document.getElementById('charAvatar').files[0];
+                    const artFile = document.getElementById('charArt').files[0];
+
+                    // Проверяем обязательные поля
+                    if (!name || !type || !gender) {
+                        errorEl.textContent = 'Заполните все обязательные поля!';
+                        return;
+                    }
+
+                    if (!avatarFile || !artFile) {
+                        errorEl.textContent = 'Загрузите изображения!';
+                        return;
+                    }
+
+                    // Показываем индикатор загрузки
+                    addCharacterSubmit.textContent = 'Загрузка...';
+                    addCharacterSubmit.disabled = true;
+
+                    // Загружаем изображения
+                    const avatarUrl = await uploadImageToImgBB(avatarFile);
+                    const artUrl = await uploadImageToImgBB(artFile);
+
+                    // Создаем объект персонажа
+                    const characterData = {
+                        name: name,
+                        type: type,
+                        gender: gender,
+                        description: description || '',
+                        height: height || '',
+                        age: age || '',
+                        romance: romance || '',
+                        avatarUrl: avatarUrl,
+                        artUrl: artUrl,
+                        authorId: firebase.auth().currentUser.uid,
+                        authorEmail: firebase.auth().currentUser.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+
+                    // Добавляем персонажа в Firestore
+                    await firebase.firestore().collection('characters').add(characterData);
+                    
+                    alert('Персонаж успешно добавлен!');
+                    
+                    // Закрываем модалку и очищаем форму
+                    addCharacterModal.style.display = 'none';
+                    document.getElementById('addCharacterModal').querySelectorAll('input, textarea, select').forEach(el => el.value = '');
+                    
+                    // Обновляем список персонажей
+                    loadUserCharacters(firebase.auth().currentUser.uid);
+
+                } catch (e) {
+                    console.error('Ошибка добавления персонажа:', e);
+                    errorEl.textContent = e.message;
+                } finally {
+                    addCharacterSubmit.textContent = 'Добавить персонажа';
+                    addCharacterSubmit.disabled = false;
+                }
+            });
+        }
     </script>
 </body>
 </html> 
