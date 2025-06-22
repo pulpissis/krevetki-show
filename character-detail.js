@@ -234,6 +234,26 @@ function renderArtsGallery() {
 // Открытие модального окна загрузки арта
 function openUploadModal() {
     console.log('Открытие модального окна загрузки - вызвано пользователем');
+    
+    // Проверяем, что у нас есть данные персонажа
+    if (!currentCharacter) {
+        console.error('Нет данных персонажа для загрузки арта');
+        alert('Персонаж не загружен');
+        return;
+    }
+    
+    // Проверяем права пользователя
+    const currentUser = firebase.auth().currentUser;
+    if (!currentUser) {
+        alert('Необходимо войти в систему для загрузки артов');
+        return;
+    }
+    
+    if (currentUser.uid !== currentCharacter.authorId && currentUserRole !== 'admin') {
+        alert('У вас нет прав для загрузки артов к этому персонажу');
+        return;
+    }
+    
     const modal = document.getElementById('uploadArtModal');
     if (modal) {
         modal.style.display = 'block';
@@ -373,7 +393,14 @@ function openGallery(startIndex = 0) {
     // Проверяем, что у нас есть данные персонажа
     if (!currentCharacter) {
         console.error('Нет данных персонажа для открытия галереи');
+        alert('Персонаж не загружен');
         return;
+    }
+    
+    // Проверяем, что startIndex является числом
+    if (typeof startIndex !== 'number' || startIndex < 0) {
+        console.error('Некорректный индекс для галереи:', startIndex);
+        startIndex = 0;
     }
     
     currentImageIndex = startIndex;
@@ -396,6 +423,11 @@ function openGallery(startIndex = 0) {
     if (allImages.length === 0) {
         alert('Нет изображений для просмотра');
         return;
+    }
+    
+    // Проверяем, что индекс не превышает количество изображений
+    if (currentImageIndex >= allImages.length) {
+        currentImageIndex = 0;
     }
 
     // Показываем галерею
@@ -620,9 +652,41 @@ window.onclick = function(event) {
     }
 }
 
+// Закрытие модальных окон при нажатии Escape
+document.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') {
+        const uploadModal = document.getElementById('uploadArtModal');
+        const galleryModal = document.getElementById('galleryModal');
+        
+        if (uploadModal && uploadModal.style.display === 'block') {
+            console.log('Закрытие модального окна загрузки по Escape');
+            closeUploadModal();
+        }
+        
+        if (galleryModal && galleryModal.style.display === 'block') {
+            console.log('Закрытие модального окна галереи по Escape');
+            closeGalleryModal();
+        }
+    }
+});
+
 // Инициализация страницы
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('Страница персонажа загружена - начинаем инициализацию');
+    
+    // Принудительно закрываем все модальные окна при загрузке страницы
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (uploadModal) {
+        uploadModal.style.display = 'none';
+        console.log('Модальное окно загрузки закрыто при инициализации');
+    }
+    
+    if (galleryModal) {
+        galleryModal.style.display = 'none';
+        console.log('Модальное окно галереи закрыто при инициализации');
+    }
     
     // Проверяем, что Firebase загружен
     if (typeof firebase === 'undefined') {
