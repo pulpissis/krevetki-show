@@ -28,6 +28,7 @@
         .fas.fa-trash::before { content: "🗑"; }
         .fas.fa-star::before { content: "★"; }
         .fas.fa-fish::before { content: "🐟"; }
+        .fas.fa-user-circle::before { content: "👤"; }
     </style>
 </head>
 <body>
@@ -58,36 +59,36 @@
             </button>
         </div>
         
-        <!-- Бургер-меню -->
-        <button id="burgerMenuBtn" class="burger-menu-btn" style="display: none;">
-            <i class="fas fa-bars"></i>
-        </button>
+        <!-- Кнопка профиля -->
+        <div id="profileBtn" class="profile-btn" style="display: none;">
+            <i class="fas fa-user-circle"></i>
+            <span class="profile-text">Профиль</span>
+        </div>
+        
+        <!-- Выпадающее меню профиля -->
+        <div id="profileDropdown" class="profile-dropdown">
+            <div class="profile-dropdown-content">
+                <div class="profile-header">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="profileUserEmail" class="profile-user-email"></span>
+                </div>
+                <div class="profile-menu-items">
+                    <button id="addCharacterBtn" class="profile-menu-item">
+                        <i class="fas fa-plus"></i> Добавить персонажа
+                    </button>
+                    <button class="profile-menu-item logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Выйти
+                    </button>
+                </div>
+            </div>
+        </div>
         
         <!-- Тестовая кнопка для отладки -->
-        <button id="testBurgerBtn" style="position: fixed; top: 80px; right: 20px; z-index: 10000; background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
-            Тест бургер
+        <button id="testProfileBtn" style="position: fixed; top: 80px; right: 20px; z-index: 10000; background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;">
+            Тест профиль
         </button>
     </header>
     
-    <!-- Бургер-меню -->
-    <div id="burgerMenu" class="burger-menu" style="display: none;">
-        <div class="burger-menu-content">
-            <div class="burger-menu-header">
-                <span id="burgerUserEmail" class="burger-user-email"></span>
-                <button id="closeBurgerMenu" class="close-burger-menu">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="burger-menu-items">
-                <button id="addCharacterBtn" class="burger-menu-item">
-                    <i class="fas fa-plus"></i> Добавить персонажа
-                </button>
-                <button class="burger-menu-item logout-btn">
-                    <i class="fas fa-sign-out-alt"></i> Выйти
-                </button>
-            </div>
-        </div>
-    </div>
     <div class="search-panel">
         <div class="search-row" style="display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 18px;">
             <div class="search-input-wrap" style="flex: 1 1 260px; max-width: 340px;">

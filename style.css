@@ -652,126 +652,129 @@ body::before { display: none !important; }
     color: var(--text-main);
     font-weight: 600;
     font-size: 0.9em;
+    margin-right: 10px;
 }
 
-/* Бургер-меню */
-.burger-menu-btn {
+/* Кнопка профиля */
+.profile-btn {
     position: fixed;
     top: 20px;
     right: 20px;
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
+    border-radius: 25px;
+    padding: 12px 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 1.2em;
+    gap: 8px;
+    font-size: 1em;
+    font-weight: 600;
     z-index: 9999;
     pointer-events: auto;
     user-select: none;
 }
 
-.burger-menu-btn:hover {
+.profile-btn:hover {
     background: var(--accent);
-    transform: scale(1.1);
+    transform: translateY(-2px);
     box-shadow: 0 6px 16px rgba(0, 119, 182, 0.4);
 }
 
-.burger-menu-btn:active {
-    transform: scale(0.95);
+.profile-btn:active {
+    transform: translateY(0);
 }
 
-.burger-menu {
+.profile-text {
+    display: none;
+}
+
+/* Выпадающее меню профиля */
+.profile-dropdown {
     position: fixed;
-    top: 0;
-    right: 0;
-    width: 300px;
-    height: 100vh;
+    top: 70px;
+    right: 20px;
     background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(15px);
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 119, 182, 0.3);
     z-index: 9998;
-    transform: translateX(100%);
-    transition: transform 0.3s ease;
-    box-shadow: -8px 0 30px rgba(0, 119, 182, 0.3);
-    border-left: 3px solid var(--accent);
-    pointer-events: auto;
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid var(--accent);
+    min-width: 250px;
 }
 
-.burger-menu.show {
-    transform: translateX(0);
+.profile-dropdown.show {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
 }
 
-.burger-menu-content {
+.profile-dropdown-content {
     padding: 20px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
-.burger-menu-header {
+.profile-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding-bottom: 20px;
+    gap: 12px;
+    padding-bottom: 15px;
     border-bottom: 2px solid var(--accent);
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
-.burger-user-email {
+.profile-header i {
+    font-size: 2em;
+    color: var(--primary);
+}
+
+.profile-user-email {
     color: var(--text-main);
     font-weight: 600;
     font-size: 0.9em;
+    word-break: break-word;
 }
 
-.close-burger-menu {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 1.5em;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: all 0.3s ease;
-}
-
-.close-burger-menu:hover {
-    background: var(--accent);
-    color: white;
-}
-
-.burger-menu-items {
+.profile-menu-items {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    flex: 1;
+    gap: 10px;
 }
 
-.burger-menu-item {
+.profile-menu-item {
     background: var(--primary);
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 15px 20px;
-    font-size: 1em;
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 0.9em;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
     display: flex;
     align-items: center;
-    gap: 12px;
-    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.2);
+    gap: 10px;
+    box-shadow: 0 2px 8px rgba(0, 119, 182, 0.2);
 }
 
-.burger-menu-item:hover {
+.profile-menu-item:hover {
     background: var(--accent);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(0, 119, 182, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
+}
+
+.profile-menu-item.logout-btn {
+    background: var(--coral);
+}
+
+.profile-menu-item.logout-btn:hover {
+    background: #ff5252;
 }
 
 /* Модальные окна */
@@ -960,10 +963,6 @@ body::before { display: none !important; }
         gap: 8px;
     }
     
-    .burger-menu {
-        width: 100%;
-    }
-    
     .modal-content {
         width: 95%;
         padding: 20px;
@@ -979,12 +978,11 @@ body::before { display: none !important; }
         margin-top: 60px;
     }
     
-    .burger-menu-btn {
+    .profile-btn {
         top: 15px;
         right: 15px;
-        width: 45px;
-        height: 45px;
-        font-size: 1.1em;
+        padding: 10px 16px;
+        font-size: 0.9em;
         z-index: 9999;
         background: var(--primary);
         color: white;
@@ -992,9 +990,15 @@ body::before { display: none !important; }
         box-shadow: 0 4px 12px rgba(0, 119, 182, 0.4);
     }
     
-    .burger-menu-btn:hover {
+    .profile-btn:hover {
         background: var(--accent);
-        transform: scale(1.05);
+        transform: translateY(-1px);
+    }
+    
+    .profile-dropdown {
+        top: 60px;
+        right: 15px;
+        min-width: 220px;
     }
     
     .sea-header {

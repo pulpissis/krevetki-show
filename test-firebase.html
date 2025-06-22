@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Тест иконок и бургер-меню</title>
+    <title>Тест кнопки профиля</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,34 +26,42 @@
             text-align: center;
             min-width: 80px;
         }
-        .burger-test {
+        .profile-test {
             position: fixed;
             top: 20px;
             right: 20px;
             background: #0077b6;
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            border-radius: 25px;
+            padding: 12px 20px;
             cursor: pointer;
-            font-size: 1.2em;
+            font-size: 1em;
+            font-weight: 600;
             z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        .burger-menu-test {
+        .profile-dropdown-test {
             position: fixed;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 100vh;
+            top: 70px;
+            right: 20px;
             background: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0,119,182,0.3);
             z-index: 9998;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            box-shadow: -5px 0 15px rgba(0,0,0,0.2);
+            transform: translateY(-20px) scale(0.95);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid #48CAE4;
+            min-width: 250px;
         }
-        .burger-menu-test.show {
-            transform: translateX(0);
+        .profile-dropdown-test.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+            visibility: visible;
         }
     </style>
     <!-- Font Awesome -->
@@ -61,22 +69,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Fallback иконки -->
     <style>
-        .fas.fa-bars::before { content: "☰"; }
+        .fas.fa-user-circle::before { content: "👤"; }
         .fas.fa-search::before { content: "🔍"; }
         .fas.fa-sort-alpha-down::before { content: "↓"; }
         .fas.fa-sign-in-alt::before { content: "→"; }
         .fas.fa-user-plus::before { content: "+"; }
         .fas.fa-times::before { content: "✕"; }
+        .fas.fa-plus::before { content: "+"; }
+        .fas.fa-sign-out-alt::before { content: "←"; }
     </style>
 </head>
 <body>
-    <h1>Тест иконок и бургер-меню</h1>
+    <h1>Тест кнопки профиля</h1>
     
     <div class="test-section">
         <h2>Тест иконок Font Awesome</h2>
         <div class="icon-test">
-            <i class="fas fa-bars"></i><br>
-            Бургер
+            <i class="fas fa-user-circle"></i><br>
+            Профиль
         </div>
         <div class="icon-test">
             <i class="fas fa-search"></i><br>
@@ -95,44 +105,56 @@
             Регистрация
         </div>
         <div class="icon-test">
-            <i class="fas fa-times"></i><br>
-            Закрыть
+            <i class="fas fa-plus"></i><br>
+            Добавить
+        </div>
+        <div class="icon-test">
+            <i class="fas fa-sign-out-alt"></i><br>
+            Выйти
         </div>
     </div>
 
     <div class="test-section">
-        <h2>Тест бургер-меню</h2>
-        <p>Нажмите на кнопку бургер-меню в правом верхнем углу</p>
-        <button onclick="testBurgerMenu()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
-            Тест бургер-меню
+        <h2>Тест кнопки профиля</h2>
+        <p>Нажмите на кнопку профиля в правом верхнем углу</p>
+        <button onclick="testProfileDropdown()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            Тест меню профиля
         </button>
     </div>
 
-    <!-- Тестовое бургер-меню -->
-    <button class="burger-test" onclick="toggleBurgerMenu()">
-        <i class="fas fa-bars"></i>
+    <!-- Тестовая кнопка профиля -->
+    <button class="profile-test" onclick="toggleProfileDropdown()">
+        <i class="fas fa-user-circle"></i>
+        <span>Профиль</span>
     </button>
     
-    <div class="burger-menu-test" id="testBurgerMenu">
+    <div class="profile-dropdown-test" id="testProfileDropdown">
         <div style="padding: 20px;">
-            <h3>Тестовое меню</h3>
-            <p>Это тестовое бургер-меню</p>
-            <button onclick="toggleBurgerMenu()" style="padding: 10px 20px; background: #0077b6; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                Закрыть
-            </button>
+            <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 15px; border-bottom: 2px solid #48CAE4; margin-bottom: 15px;">
+                <i class="fas fa-user-circle" style="font-size: 2em; color: #0077b6;"></i>
+                <span style="color: #023E8A; font-weight: 600; font-size: 0.9em;">test@example.com</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button style="background: #0077b6; color: white; border: none; border-radius: 10px; padding: 12px 16px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-plus"></i> Добавить персонажа
+                </button>
+                <button style="background: #FF6B6B; color: white; border: none; border-radius: 10px; padding: 12px 16px; font-size: 0.9em; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        function toggleBurgerMenu() {
-            const menu = document.getElementById('testBurgerMenu');
-            menu.classList.toggle('show');
-            console.log('Бургер-меню переключено:', menu.classList.contains('show'));
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('testProfileDropdown');
+            dropdown.classList.toggle('show');
+            console.log('Меню профиля переключено:', dropdown.classList.contains('show'));
         }
 
-        function testBurgerMenu() {
-            console.log('Тест бургер-меню запущен');
-            toggleBurgerMenu();
+        function testProfileDropdown() {
+            console.log('Тест меню профиля запущен');
+            toggleProfileDropdown();
         }
 
         // Проверяем загрузку Font Awesome
@@ -140,13 +162,23 @@
             console.log('Страница загружена');
             
             // Проверяем, загрузились ли иконки
-            const testIcon = document.querySelector('.fas.fa-bars');
+            const testIcon = document.querySelector('.fas.fa-user-circle');
             if (testIcon) {
-                console.log('Иконка найдена:', testIcon);
+                console.log('Иконка профиля найдена:', testIcon);
                 const computedStyle = window.getComputedStyle(testIcon, '::before');
                 console.log('Стиль иконки:', computedStyle.content);
             } else {
-                console.log('Иконка не найдена');
+                console.log('Иконка профиля не найдена');
+            }
+        });
+
+        // Клик вне меню для закрытия
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('testProfileDropdown');
+            const profileBtn = document.querySelector('.profile-test');
+            
+            if (dropdown && !dropdown.contains(event.target) && !profileBtn.contains(event.target)) {
+                dropdown.classList.remove('show');
             }
         });
     </script>
