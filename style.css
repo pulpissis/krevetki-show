@@ -1499,8 +1499,8 @@ body::before { display: none !important; }
 
 .gallery-image-container {
     position: relative;
-    max-width: 60%;
-    max-height: 50vh;
+    max-width: 40%;
+    max-height: 35vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1622,8 +1622,8 @@ body::before { display: none !important; }
     }
     
     .gallery-image-container {
-        max-width: 85%;
-        max-height: 40vh;
+        max-width: 60%;
+        max-height: 25vh;
     }
     
     .gallery-nav {
