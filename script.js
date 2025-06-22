@@ -196,16 +196,48 @@ document.addEventListener('DOMContentLoaded', function() {
         loginSubmit.onclick = async function() {
             if (!checkFirebaseLoaded()) return;
             
-            const email = document.getElementById('loginEmail').value;
+            const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const errorEl = document.getElementById('loginError');
             errorEl.textContent = '';
+            
+            if (!email || !password) {
+                errorEl.textContent = 'Заполните все поля!';
+                return;
+            }
+            
             try {
                 await firebase.auth().signInWithEmailAndPassword(email, password);
                 loginModal.style.display = 'none';
+                // Очищаем форму после успешного входа
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
                 alert('Вход выполнен!');
             } catch (e) {
-                errorEl.textContent = e.message;
+                console.error('Ошибка входа:', e);
+                let errorMessage = 'Ошибка входа';
+                
+                switch (e.code) {
+                    case 'auth/invalid-credential':
+                        errorMessage = 'Неверный email или пароль';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMessage = 'Пользователь с таким email не найден';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMessage = 'Неверный пароль';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Неверный формат email';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMessage = 'Слишком много попыток входа. Попробуйте позже';
+                        break;
+                    default:
+                        errorMessage = e.message;
+                }
+                
+                errorEl.textContent = errorMessage;
             }
         };
     }
@@ -267,8 +299,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if (logoutBtn) {
         logoutBtn.onclick = async function() {
             if (!checkFirebaseLoaded()) return;
-            await firebase.auth().signOut();
-            alert('Вы вышли из аккаунта');
+            try {
+                await firebase.auth().signOut();
+                // Очищаем данные пользователя
+                window.currentUserRole = null;
+                alert('Вы вышли из аккаунта');
+            } catch (e) {
+                console.error('Ошибка выхода:', e);
+                alert('Ошибка при выходе: ' + e.message);
+            }
         };
     }
 

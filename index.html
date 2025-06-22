@@ -93,16 +93,16 @@
         </footer>
     </div>
     <!-- Firebase и скрипты -->
-    <script src="firebase/firebase-app-compat.js"></script>
-    <script src="firebase/firebase-auth-compat.js"></script>
-    <script src="firebase/firebase-firestore-compat.js"></script>
+    <script src="https://unpkg.com/firebase@10.12.2/dist/firebase-app-compat.js"></script>
+    <script src="https://unpkg.com/firebase@10.12.2/dist/firebase-auth-compat.js"></script>
+    <script src="https://unpkg.com/firebase@10.12.2/dist/firebase-firestore-compat.js"></script>
     
     <script>
       // Проверяем, загрузился ли Firebase
       function checkFirebase() {
         if (typeof firebase === 'undefined') {
           console.error('Firebase не загружен!');
-          alert('Ошибка загрузки Firebase. Проверьте, что файлы firebase загружены в папку firebase/');
+          alert('Ошибка загрузки Firebase. Попробуйте обновить страницу.');
           return false;
         }
         return true;
@@ -124,7 +124,7 @@
           console.log('Firebase успешно инициализирован');
         } catch (error) {
           console.error('Ошибка инициализации Firebase:', error);
-          alert('Ошибка инициализации Firebase. Проверьте конфигурацию.');
+          alert('Ошибка инициализации Firebase. Попробуйте обновить страницу.');
         }
       }
     </script>
