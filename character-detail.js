@@ -247,103 +247,139 @@ function closeUploadModal() {
     }
 }
 
-// Настройка формы загрузки
+// Настройка формы загрузки для множественных файлов с индивидуальными описаниями
 function setupUploadForm() {
     const form = document.getElementById('uploadArtForm');
-    const fileInput = document.getElementById('artFile');
+    const fileInput = document.getElementById('artFiles');
     const preview = document.getElementById('artPreview');
 
     if (!form || !fileInput || !preview) {
         return;
     }
 
-    // Предварительный просмотр изображения
+    // Сброс предпросмотра при открытии
+    preview.innerHTML = '';
+
+    // Предварительный просмотр выбранных файлов с полем описания
     fileInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
+        const files = Array.from(e.target.files);
+        if (!files.length) {
+            preview.innerHTML = '<div class="image-preview-grid empty">Нет выбранных файлов</div>';
+            return;
+        }
+        preview.innerHTML = '';
+        files.forEach((file, idx) => {
             const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            reader.onload = function(ev) {
+                const div = document.createElement('div');
+                div.className = 'preview-item';
+                div.innerHTML = `
+                    <img src="${ev.target.result}" alt="Preview ${idx+1}">
+                    <textarea class="art-desc-input" placeholder="Описание для этого изображения (необязательно)" style="width: 100%; margin-top: 5px; resize: vertical;"></textarea>
+                `;
+                preview.appendChild(div);
             };
             reader.readAsDataURL(file);
-        }
+        });
     });
 
     // Обработка отправки формы
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        await uploadArt();
+        await uploadArtMulti();
     });
 }
 
-// Загрузка арта
-async function uploadArt() {
+// Множественная загрузка артов с индивидуальными описаниями
+async function uploadArtMulti() {
     const form = document.getElementById('uploadArtForm');
-    const formData = new FormData(form);
-    const title = formData.get('artTitle');
-    const description = formData.get('artDescription');
-    const file = formData.get('artFile');
+    const fileInput = document.getElementById('artFiles');
+    const title = document.getElementById('artTitle').value.trim();
+    const files = Array.from(fileInput.files);
+    const preview = document.getElementById('artPreview');
+    // Собираем описания из textarea
+    const descInputs = preview.querySelectorAll('.art-desc-input');
+    const descriptions = Array.from(descInputs).map(input => input.value.trim());
 
-    if (!file) {
-        alert('Пожалуйста, выберите изображение');
+    if (!files.length) {
+        alert('Пожалуйста, выберите хотя бы одно изображение');
+        return;
+    }
+    if (!title) {
+        alert('Пожалуйста, введите название для артов');
         return;
     }
 
+    const submitBtn = form.querySelector('.submit-btn');
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+    submitBtn.disabled = true;
+
+    // Прогресс
+    let progressDiv = document.querySelector('.upload-progress');
+    if (!progressDiv) {
+        progressDiv = document.createElement('div');
+        progressDiv.className = 'upload-progress';
+        form.appendChild(progressDiv);
+    }
+    progressDiv.innerHTML = '';
+
     try {
-        // Показываем индикатор загрузки
-        const submitBtn = form.querySelector('.submit-btn');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
-        submitBtn.disabled = true;
-
-        // Загружаем изображение на ImgBB
-        const imgbbData = new FormData();
-        imgbbData.append('image', file);
-        
-        const response = await fetch('https://api.imgbb.com/1/upload?key=2e872047678fd602dab294e858608fd4', {
-            method: 'POST',
-            body: imgbbData
-        });
-
-        if (!response.ok) {
-            throw new Error('Ошибка загрузки изображения');
-        }
-
-        const result = await response.json();
-        const imageUrl = result.data.url;
-
-        // Сохраняем информацию об арте в Firestore
         const currentUser = firebase.auth().currentUser;
-        const artData = {
-            title: title,
-            description: description,
-            imageUrl: imageUrl,
-            authorId: currentUser.uid,
-            authorEmail: currentUser.email,
-            authorName: currentUser.displayName || currentUser.email.split('@')[0],
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-
-        await firebase.firestore()
-            .collection('characters')
-            .doc(currentCharacter.id)
-            .collection('arts')
-            .add(artData);
-
+        let uploadedCount = 0;
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const description = descriptions[i] || '';
+            const progressItem = document.createElement('div');
+            progressItem.className = 'progress-item';
+            progressItem.innerHTML = `<span class="progress-filename">${file.name}</span><span class="progress-status uploading">Загрузка...</span>`;
+            progressDiv.appendChild(progressItem);
+            try {
+                // Загружаем изображение на ImgBB
+                const imgbbData = new FormData();
+                imgbbData.append('image', file);
+                const response = await fetch('https://api.imgbb.com/1/upload?key=2e872047678fd602dab294e858608fd4', {
+                    method: 'POST',
+                    body: imgbbData
+                });
+                if (!response.ok) throw new Error('Ошибка загрузки изображения');
+                const result = await response.json();
+                const imageUrl = result.data.url;
+                // Сохраняем информацию об арте в Firestore
+                const artData = {
+                    title: title,
+                    description: description,
+                    imageUrl: imageUrl,
+                    authorId: currentUser.uid,
+                    authorEmail: currentUser.email,
+                    authorName: currentUser.displayName || currentUser.email.split('@')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                await firebase.firestore()
+                    .collection('characters')
+                    .doc(currentCharacter.id)
+                    .collection('arts')
+                    .add(artData);
+                progressItem.querySelector('.progress-status').textContent = 'Успешно';
+                progressItem.querySelector('.progress-status').className = 'progress-status success';
+                uploadedCount++;
+            } catch (err) {
+                progressItem.querySelector('.progress-status').textContent = 'Ошибка';
+                progressItem.querySelector('.progress-status').className = 'progress-status error';
+            }
+        }
         // Обновляем галерею
         await loadCharacterArts(currentCharacter.id);
         renderCharacterDetail(currentCharacter);
-
         closeUploadModal();
-        alert('Арт успешно загружен!');
-
+        alert(`Загружено успешно: ${uploadedCount} из ${files.length}`);
     } catch (error) {
-        console.error('Ошибка загрузки арта:', error);
-        alert('Ошибка загрузки арта: ' + error.message);
+        console.error('Ошибка загрузки артов:', error);
+        alert('Ошибка загрузки артов: ' + error.message);
     } finally {
-        const submitBtn = form.querySelector('.submit-btn');
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
+        if (progressDiv) progressDiv.remove();
     }
 }
 

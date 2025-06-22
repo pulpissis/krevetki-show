@@ -49,36 +49,37 @@
             <div class="loading">
                 <i class="fas fa-spinner fa-spin"></i>
                 <p>Загрузка персонажа...</p>
+                <p id="debugInfo" style="font-size: 0.8em; color: #666;"></p>
             </div>
         </div>
     </div>
 
     <!-- Модальное окно для загрузки артов -->
-    <div id="uploadArtModal" class="modal" style="display: none;">
+    <div id="uploadArtModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fas fa-upload"></i> Загрузить новый арт</h2>
+                <h2><i class="fas fa-upload"></i> Загрузить новые арты</h2>
                 <span class="close" onclick="closeUploadModal()">&times;</span>
             </div>
             <div class="modal-body">
                 <form id="uploadArtForm">
                     <div class="form-group">
-                        <label for="artTitle">Название арта:</label>
-                        <input type="text" id="artTitle" name="artTitle" required placeholder="Введите название арта">
+                        <label for="artFiles">Выберите изображения (можно выбрать несколько):</label>
+                        <input type="file" id="artFiles" name="artFiles" accept="image/*" multiple required>
+                        <p class="form-hint">Можно выбрать несколько файлов одновременно (Ctrl+клик или Shift+клик)</p>
                     </div>
                     <div class="form-group">
-                        <label for="artDescription">Описание:</label>
-                        <textarea id="artDescription" name="artDescription" placeholder="Описание арта (необязательно)"></textarea>
+                        <label for="artTitle">Название для всех артов:</label>
+                        <input type="text" id="artTitle" name="artTitle" required placeholder="Введите название для артов">
                     </div>
                     <div class="form-group">
-                        <label for="artFile">Выберите изображение:</label>
-                        <input type="file" id="artFile" name="artFile" accept="image/*" required>
-                        <div id="artPreview" class="image-preview"></div>
+                        <label>Предварительный просмотр и описания:</label>
+                        <div id="artPreview" class="image-preview-grid"></div>
                     </div>
                     <div class="form-actions">
                         <button type="button" onclick="closeUploadModal()" class="cancel-btn">Отмена</button>
                         <button type="submit" class="submit-btn">
-                            <i class="fas fa-upload"></i> Загрузить арт
+                            <i class="fas fa-upload"></i> Загрузить арты
                         </button>
                     </div>
                 </form>
@@ -87,21 +88,33 @@
     </div>
 
     <!-- Модальное окно для просмотра галереи -->
-    <div id="galleryModal" class="gallery-modal" style="display: none;">
-        <div class="modal-content">
-            <div class="gallery-header">
+    <div id="galleryModal" class="modal gallery-modal">
+        <div class="modal-content gallery-content">
+            <div class="modal-header">
                 <h2><i class="fas fa-images"></i> Галерея артов</h2>
-                <button class="gallery-close" onclick="closeGalleryModal()">&times;</button>
+                <span class="close" onclick="closeGalleryModal()">&times;</span>
             </div>
-            <div class="gallery-body">
-                <img id="galleryMainImage" class="gallery-main-image" src="" alt="">
-            </div>
-            <div class="gallery-info">
-                <h3 id="galleryImageTitle"></h3>
-                <p id="galleryImageDescription"></p>
-            </div>
-            <div class="gallery-thumbnails" id="galleryThumbnails">
-                <!-- Миниатюры будут добавлены динамически -->
+            <div class="modal-body">
+                <div class="gallery-container">
+                    <div class="gallery-main">
+                        <button class="gallery-nav prev" onclick="previousImage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="gallery-image-container">
+                            <img id="galleryMainImage" src="" alt="">
+                            <div class="gallery-image-info">
+                                <h3 id="galleryImageTitle"></h3>
+                                <p id="galleryImageDescription"></p>
+                            </div>
+                        </div>
+                        <button class="gallery-nav next" onclick="nextImage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                        <!-- Миниатюры будут добавлены динамически -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -116,9 +129,25 @@
     </footer>
 
     <script>
+        // Простая отладочная информация
+        console.log('Страница character.html загружена');
+        console.log('URL:', window.location.href);
+        console.log('URL параметры:', window.location.search);
+        
         // Получаем ID персонажа из URL
         const urlParams = new URLSearchParams(window.location.search);
         const characterId = urlParams.get('id');
+        console.log('ID персонажа из URL:', characterId);
+        
+        // Показываем отладочную информацию на странице
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo) {
+            debugInfo.innerHTML = `
+                URL: ${window.location.href}<br>
+                ID персонажа: ${characterId || 'не найден'}<br>
+                Firebase: ${typeof firebase !== 'undefined' ? 'загружен' : 'не загружен'}
+            `;
+        }
         
         // Простая функция возврата
         function goBack() {
