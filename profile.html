@@ -478,12 +478,37 @@
             console.error('Ошибка инициализации Firebase:', error);
         }
         
+        // Переменная для хранения роли пользователя
+        let currentUserRole = 'user';
+        
+        // Функция для получения роли пользователя
+        async function fetchUserRole(user) {
+            if (!user) {
+                currentUserRole = null;
+                return;
+            }
+            
+            try {
+                const doc = await firebase.firestore().collection('users').doc(user.uid).get();
+                if (doc.exists) {
+                    currentUserRole = doc.data().role || 'user';
+                } else {
+                    currentUserRole = 'user';
+                }
+            } catch (error) {
+                console.error('Ошибка получения роли пользователя:', error);
+                currentUserRole = 'user';
+            }
+        }
+        
         // Проверяем авторизацию
-        firebase.auth().onAuthStateChanged(function(user) {
+        firebase.auth().onAuthStateChanged(async function(user) {
             if (user) {
                 console.log('Пользователь авторизован:', user.email);
+                await fetchUserRole(user);
                 loadProfileData(user);
                 loadUserCharacters(user.uid);
+                updateAdminButtonVisibility();
             } else {
                 console.log('Пользователь не авторизован');
                 window.location.href = 'index.html';
@@ -835,6 +860,18 @@
             } catch (e) {
                 console.error('Ошибка при обновлении всех персонажей:', e);
                 alert('Ошибка при обновлении всех персонажей: ' + e.message);
+            }
+        }
+        
+        // Функция для управления видимостью кнопки администратора
+        function updateAdminButtonVisibility() {
+            const adminButton = document.querySelector('button[onclick="updateAllCharacters()"]');
+            if (adminButton) {
+                if (currentUserRole === 'admin') {
+                    adminButton.style.display = 'inline-block';
+                } else {
+                    adminButton.style.display = 'none';
+                }
             }
         }
         
