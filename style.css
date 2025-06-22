@@ -20,6 +20,13 @@
     --coral: #FF6B6B;
 }
 
+/* Предотвращение горизонтальной прокрутки на мобильных устройствах */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+    position: relative;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -38,6 +45,7 @@ body {
     color: var(--text-main);
     position: relative;
     overflow-x: hidden;
+    width: 100%;
 }
 body::before { display: none !important; }
 
@@ -1611,5 +1619,158 @@ body::before { display: none !important; }
 }
 
 .art-description {
-    font-size: 0.8em;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+
+/* Дополнительные правила для мобильных устройств */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+        overflow-x: hidden;
+    }
+    
+    .sea-header {
+        margin-top: 20px;
+        margin-bottom: 15px;
+        width: 100%;
+        max-width: 100vw;
+    }
+    
+    .sea-title {
+        font-size: 2.5em;
+        padding: 0.1em 0.3em;
+        max-width: 100%;
+        word-wrap: break-word;
+    }
+    
+    .search-panel {
+        width: 100%;
+        max-width: 100vw;
+        padding: 0 10px;
+    }
+    
+    .search-input-wrap {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .search-input {
+        width: 100%;
+        min-width: auto;
+        max-width: 100%;
+    }
+    
+    .gallery-masonry {
+        width: 100%;
+        max-width: 100vw;
+        padding: 0 10px;
+    }
+    
+    .character-card {
+        width: 100%;
+        max-width: 100%;
+        margin: 10px 0;
+    }
+    
+    .card-image-container {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .card-image-container img {
+        width: 100%;
+        height: auto;
+        max-width: 100%;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-width: 95vw;
+        margin: 10px;
+        padding: 20px;
+    }
+    
+    .top-waves {
+        width: 100vw;
+        max-width: 100vw;
+        left: 0;
+        transform: none;
+    }
+    
+    .ocean-sky, .sky-gradient, .sun.soft {
+        width: 100vw;
+        max-width: 100vw;
+    }
+    
+    .bubbles-bg, .bubble-bg {
+        max-width: 100vw;
+    }
+    
+    /* Исправление для элементов, которые могут выходить за границы */
+    .auth-buttons, .user-info, .profile-btn, .add-character-btn {
+        max-width: 100%;
+        width: auto;
+    }
+    
+    .profile-btn, .add-character-btn {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    .profile-text, .add-character-text {
+        display: none;
+    }
+    
+    /* Исправление для модальных окон */
+    .modal {
+        padding: 10px;
+    }
+    
+    /* Исправление для галереи */
+    .gallery-modal .modal-content {
+        width: 95%;
+        max-width: 95vw;
+        height: 90vh;
+    }
+    
+    .gallery-main-image {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    .gallery-thumbnails {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    
+    .gallery-thumbnail {
+        max-width: 60px;
+        height: auto;
+    }
+}
+
+/* Дополнительные правила для очень маленьких экранов */
+@media (max-width: 480px) {
+    body {
+        padding: 15px 5px;
+    }
+    
+    .sea-title {
+        font-size: 2em;
+    }
+    
+    .search-input-wrap {
+        max-width: 280px;
+    }
+    
+    .modal-content {
+        width: 98%;
+        max-width: 98vw;
+        padding: 15px;
+    }
+    
+    .character-card {
+        margin: 8px 0;
+    }
 }
