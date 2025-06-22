@@ -17,8 +17,11 @@ function getCharacterIdFromUrl() {
 
 // Загрузка роли пользователя
 async function fetchUserRole(user) {
+    console.log('Загрузка роли пользователя:', user ? user.email : 'не авторизован');
+    
     if (!user) { 
         currentUserRole = null; 
+        console.log('Роль пользователя установлена: null');
         return; 
     }
     try {
@@ -28,13 +31,32 @@ async function fetchUserRole(user) {
         } else {
             currentUserRole = 'user';
         }
+        console.log('Роль пользователя установлена:', currentUserRole);
+        
+        // Убеждаемся, что модальные окна закрыты после загрузки роли
+        const uploadModal = document.getElementById('uploadArtModal');
+        const galleryModal = document.getElementById('galleryModal');
+        
+        if (uploadModal && uploadModal.style.display !== 'none') {
+            uploadModal.style.display = 'none';
+            console.log('Модальное окно загрузки закрыто после загрузки роли');
+        }
+        
+        if (galleryModal && galleryModal.style.display !== 'none') {
+            galleryModal.style.display = 'none';
+            console.log('Модальное окно галереи закрыто после загрузки роли');
+        }
+        
     } catch (e) {
         currentUserRole = 'user';
+        console.error('Ошибка загрузки роли пользователя:', e);
     }
 }
 
 // Загрузка персонажа из Firestore
 async function loadCharacter(characterId) {
+    console.log('Загрузка персонажа из Firestore:', characterId);
+    
     try {
         const doc = await firebase.firestore().collection('characters').doc(characterId).get();
         if (!doc.exists) {
@@ -43,16 +65,35 @@ async function loadCharacter(characterId) {
         }
         
         currentCharacter = { id: doc.id, ...doc.data() };
+        console.log('Персонаж загружен:', currentCharacter.name);
+        
         await loadCharacterArts(characterId);
         renderCharacterDetail(currentCharacter);
         
+        // Убеждаемся, что модальные окна закрыты после загрузки персонажа
+        const uploadModal = document.getElementById('uploadArtModal');
+        const galleryModal = document.getElementById('galleryModal');
+        
+        if (uploadModal && uploadModal.style.display !== 'none') {
+            uploadModal.style.display = 'none';
+            console.log('Модальное окно загрузки закрыто после загрузки персонажа');
+        }
+        
+        if (galleryModal && galleryModal.style.display !== 'none') {
+            galleryModal.style.display = 'none';
+            console.log('Модальное окно галереи закрыто после загрузки персонажа');
+        }
+        
     } catch (e) {
+        console.error('Ошибка загрузки персонажа:', e);
         showError('Ошибка загрузки персонажа: ' + e.message);
     }
 }
 
 // Загрузка артов персонажа
 async function loadCharacterArts(characterId) {
+    console.log('Загрузка артов для персонажа:', characterId);
+    
     try {
         const artsSnapshot = await firebase.firestore()
             .collection('characters')
@@ -67,6 +108,21 @@ async function loadCharacterArts(characterId) {
         }));
         
         console.log('Загружено артов:', characterArts.length);
+        
+        // Убеждаемся, что модальные окна закрыты после загрузки артов
+        const uploadModal = document.getElementById('uploadArtModal');
+        const galleryModal = document.getElementById('galleryModal');
+        
+        if (uploadModal && uploadModal.style.display !== 'none') {
+            uploadModal.style.display = 'none';
+            console.log('Модальное окно загрузки закрыто после загрузки артов');
+        }
+        
+        if (galleryModal && galleryModal.style.display !== 'none') {
+            galleryModal.style.display = 'none';
+            console.log('Модальное окно галереи закрыто после загрузки артов');
+        }
+        
     } catch (e) {
         console.error('Ошибка загрузки артов:', e);
         characterArts = [];
@@ -75,6 +131,8 @@ async function loadCharacterArts(characterId) {
 
 // Отображение детальной информации о персонаже
 function renderCharacterDetail(character) {
+    console.log('Рендеринг детальной информации персонажа:', character.name);
+    
     const container = document.getElementById('characterDetail');
     
     // Формируем характеристики
@@ -151,10 +209,28 @@ function renderCharacterDetail(character) {
             </div>
         </div>
     `;
+    
+    console.log('Рендеринг персонажа завершен');
+    
+    // Убеждаемся, что модальные окна закрыты после рендеринга
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (uploadModal && uploadModal.style.display !== 'none') {
+        uploadModal.style.display = 'none';
+        console.log('Модальное окно загрузки закрыто после рендеринга');
+    }
+    
+    if (galleryModal && galleryModal.style.display !== 'none') {
+        galleryModal.style.display = 'none';
+        console.log('Модальное окно галереи закрыто после рендеринга');
+    }
 }
 
 // Рендеринг галереи артов
 function renderArtsGallery() {
+    console.log('Рендеринг галереи артов');
+    
     const currentUser = firebase.auth().currentUser;
     const canUpload = currentUser && (
         currentUser.uid === currentCharacter.authorId || 
@@ -182,7 +258,7 @@ function renderArtsGallery() {
         artsHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic;">Арты пока не загружены</p>';
     }
 
-    return `
+    const result = `
         <div class="character-section">
             <div class="arts-header">
                 <h3><i class="fas fa-images"></i> Галерея артов</h3>
@@ -197,23 +273,59 @@ function renderArtsGallery() {
             </div>
         </div>
     `;
+    
+    console.log('Галерея артов отрендерена');
+    
+    // Убеждаемся, что модальные окна закрыты после рендеринга галереи
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (uploadModal && uploadModal.style.display !== 'none') {
+        uploadModal.style.display = 'none';
+        console.log('Модальное окно загрузки закрыто после рендеринга галереи');
+    }
+    
+    if (galleryModal && galleryModal.style.display !== 'none') {
+        galleryModal.style.display = 'none';
+        console.log('Модальное окно галереи закрыто после рендеринга галереи');
+    }
+    
+    return result;
 }
 
 // Открытие модального окна загрузки арта
 function openUploadModal() {
-    document.getElementById('uploadArtModal').style.display = 'block';
-    setupUploadForm();
+    console.log('Открытие модального окна загрузки - вызвано пользователем');
+    const modal = document.getElementById('uploadArtModal');
+    if (modal) {
+        modal.style.display = 'block';
+        setupUploadForm();
+    } else {
+        console.error('Модальное окно загрузки не найдено');
+    }
 }
 
 // Закрытие модального окна загрузки арта
 function closeUploadModal() {
-    document.getElementById('uploadArtModal').style.display = 'none';
-    document.getElementById('uploadArtForm').reset();
-    document.getElementById('artPreview').innerHTML = '';
+    console.log('Закрытие модального окна загрузки');
+    const modal = document.getElementById('uploadArtModal');
+    if (modal) {
+        modal.style.display = 'none';
+        const form = document.getElementById('uploadArtForm');
+        if (form) {
+            form.reset();
+        }
+        const preview = document.getElementById('artPreview');
+        if (preview) {
+            preview.innerHTML = '';
+        }
+    }
 }
 
 // Настройка формы загрузки
 function setupUploadForm() {
+    console.log('Настройка формы загрузки');
+    
     const form = document.getElementById('uploadArtForm');
     const fileInput = document.getElementById('artFile');
     const preview = document.getElementById('artPreview');
@@ -235,10 +347,27 @@ function setupUploadForm() {
         e.preventDefault();
         await uploadArt();
     });
+    
+    console.log('Форма загрузки настроена');
+    
+    // Убеждаемся, что модальные окна не открываются автоматически при настройке формы
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (uploadModal && uploadModal.style.display !== 'block') {
+        console.log('Модальное окно загрузки остается закрытым при настройке формы');
+    }
+    
+    if (galleryModal && galleryModal.style.display !== 'none') {
+        galleryModal.style.display = 'none';
+        console.log('Модальное окно галереи закрыто при настройке формы загрузки');
+    }
 }
 
 // Загрузка арта
 async function uploadArt() {
+    console.log('Начало загрузки арта');
+    
     const form = document.getElementById('uploadArtForm');
     const formData = new FormData(form);
     const title = formData.get('artTitle');
@@ -304,11 +433,33 @@ async function uploadArt() {
         const submitBtn = form.querySelector('.submit-btn');
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
+        
+        // Убеждаемся, что модальные окна закрыты после загрузки арта
+        const uploadModal = document.getElementById('uploadArtModal');
+        const galleryModal = document.getElementById('galleryModal');
+        
+        if (uploadModal && uploadModal.style.display !== 'none') {
+            uploadModal.style.display = 'none';
+            console.log('Модальное окно загрузки закрыто после загрузки арта');
+        }
+        
+        if (galleryModal && galleryModal.style.display !== 'none') {
+            galleryModal.style.display = 'none';
+            console.log('Модальное окно галереи закрыто после загрузки арта');
+        }
     }
 }
 
 // Открытие галереи
 function openGallery(startIndex = 0) {
+    console.log('Открытие галереи с индексом:', startIndex, '- вызвано пользователем');
+    
+    // Проверяем, что у нас есть данные персонажа
+    if (!currentCharacter) {
+        console.error('Нет данных персонажа для открытия галереи');
+        return;
+    }
+    
     currentImageIndex = startIndex;
     
     // Создаем массив всех изображений (аватарка, основной арт + арты)
@@ -332,18 +483,29 @@ function openGallery(startIndex = 0) {
     }
 
     // Показываем галерею
-    document.getElementById('galleryModal').style.display = 'block';
-    updateGalleryView(allImages);
-    renderGalleryThumbnails(allImages);
+    const galleryModal = document.getElementById('galleryModal');
+    if (galleryModal) {
+        galleryModal.style.display = 'block';
+        updateGalleryView(allImages);
+        renderGalleryThumbnails(allImages);
+    } else {
+        console.error('Модальное окно галереи не найдено');
+    }
 }
 
 // Закрытие галереи
 function closeGalleryModal() {
-    document.getElementById('galleryModal').style.display = 'none';
+    console.log('Закрытие галереи');
+    const modal = document.getElementById('galleryModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 // Обновление основного изображения в галерее
 function updateGalleryView(allImages) {
+    console.log('Обновление вида галереи, индекс:', currentImageIndex);
+    
     const mainImage = document.getElementById('galleryMainImage');
     const title = document.getElementById('galleryImageTitle');
     const description = document.getElementById('galleryImageDescription');
@@ -361,10 +523,14 @@ function updateGalleryView(allImages) {
     
     prevBtn.disabled = currentImageIndex <= 0;
     nextBtn.disabled = currentImageIndex >= allImages.length - 1;
+    
+    console.log('Вид галереи обновлен');
 }
 
 // Рендеринг миниатюр
 function renderGalleryThumbnails(allImages) {
+    console.log('Рендеринг миниатюр галереи');
+    
     const thumbnailsContainer = document.getElementById('galleryThumbnails');
     
     thumbnailsContainer.innerHTML = allImages.map((image, index) => `
@@ -373,10 +539,14 @@ function renderGalleryThumbnails(allImages) {
              class="thumbnail ${index === currentImageIndex ? 'active' : ''}"
              onclick="goToImage(${index})">
     `).join('');
+    
+    console.log('Миниатюры галереи отрендерены');
 }
 
 // Переход к изображению
 function goToImage(index) {
+    console.log('Переход к изображению с индексом:', index);
+    
     currentImageIndex = index;
     const allImages = [
         { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
@@ -393,10 +563,14 @@ function goToImage(index) {
 
     updateGalleryView(allImages);
     renderGalleryThumbnails(allImages);
+    
+    console.log('Переход к изображению завершен');
 }
 
 // Следующее изображение
 function nextImage() {
+    console.log('Переход к следующему изображению');
+    
     const allImages = [
         { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
         { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
@@ -414,11 +588,16 @@ function nextImage() {
         currentImageIndex++;
         updateGalleryView(allImages);
         renderGalleryThumbnails(allImages);
+        console.log('Переход к следующему изображению завершен');
+    } else {
+        console.log('Достигнут конец галереи');
     }
 }
 
 // Предыдущее изображение
 function previousImage() {
+    console.log('Переход к предыдущему изображению');
+    
     const allImages = [
         { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
         { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
@@ -436,11 +615,16 @@ function previousImage() {
         currentImageIndex--;
         updateGalleryView(allImages);
         renderGalleryThumbnails(allImages);
+        console.log('Переход к предыдущему изображению завершен');
+    } else {
+        console.log('Достигнуто начало галереи');
     }
 }
 
 // Показать ошибку
 function showError(message) {
+    console.log('Показ ошибки:', message);
+    
     const container = document.getElementById('characterDetail');
     container.innerHTML = `
         <div class="error-message">
@@ -450,6 +634,20 @@ function showError(message) {
             <button onclick="goBack()" class="back-btn">Вернуться назад</button>
         </div>
     `;
+    
+    // Убеждаемся, что модальные окна закрыты при показе ошибки
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (uploadModal && uploadModal.style.display !== 'none') {
+        uploadModal.style.display = 'none';
+        console.log('Модальное окно загрузки закрыто при показе ошибки');
+    }
+    
+    if (galleryModal && galleryModal.style.display !== 'none') {
+        galleryModal.style.display = 'none';
+        console.log('Модальное окно галереи закрыто при показе ошибки');
+    }
 }
 
 // Функции редактирования и удаления (аналогичные тем, что в script.js)
@@ -506,25 +704,49 @@ window.onclick = function(event) {
     const galleryModal = document.getElementById('galleryModal');
     
     if (event.target === uploadModal) {
+        console.log('Закрытие модального окна загрузки при клике вне его');
         closeUploadModal();
     }
     if (event.target === galleryModal) {
+        console.log('Закрытие модального окна галереи при клике вне его');
         closeGalleryModal();
     }
 }
 
 // Инициализация страницы
 document.addEventListener('DOMContentLoaded', async function() {
+    console.log('Страница персонажа загружена - начинаем инициализацию');
+    
+    // Проверяем, что модальные окна закрыты при загрузке
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (uploadModal) {
+        uploadModal.style.display = 'none';
+        console.log('Модальное окно загрузки закрыто при инициализации');
+    }
+    
+    if (galleryModal) {
+        galleryModal.style.display = 'none';
+        console.log('Модальное окно галереи закрыто при инициализации');
+    }
+    
     // Получаем роль пользователя
     firebase.auth().onAuthStateChanged(async function(user) {
+        console.log('Состояние аутентификации изменилось:', user ? 'пользователь авторизован' : 'пользователь не авторизован');
         await fetchUserRole(user);
     });
     
     // Загружаем персонажа
     const characterId = getCharacterIdFromUrl();
     if (characterId) {
+        console.log('Загружаем персонажа с ID:', characterId);
         await loadCharacter(characterId);
+        console.log('Персонаж загружен успешно');
     } else {
+        console.error('ID персонажа не указан');
         showError('ID персонажа не указан');
     }
+    
+    console.log('Инициализация страницы завершена');
 }); 
