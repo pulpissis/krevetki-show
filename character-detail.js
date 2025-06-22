@@ -1,6 +1,8 @@
 // Глобальные переменные
 let currentUserRole = null;
 let currentCharacter = null;
+let characterArts = [];
+let currentImageIndex = 0;
 
 // Функция для возврата назад
 function goBack() {
@@ -41,10 +43,33 @@ async function loadCharacter(characterId) {
         }
         
         currentCharacter = { id: doc.id, ...doc.data() };
+        await loadCharacterArts(characterId);
         renderCharacterDetail(currentCharacter);
         
     } catch (e) {
         showError('Ошибка загрузки персонажа: ' + e.message);
+    }
+}
+
+// Загрузка артов персонажа
+async function loadCharacterArts(characterId) {
+    try {
+        const artsSnapshot = await firebase.firestore()
+            .collection('characters')
+            .doc(characterId)
+            .collection('arts')
+            .orderBy('createdAt', 'desc')
+            .get();
+        
+        characterArts = artsSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+        
+        console.log('Загружено артов:', characterArts.length);
+    } catch (e) {
+        console.error('Ошибка загрузки артов:', e);
+        characterArts = [];
     }
 }
 
@@ -65,11 +90,14 @@ function renderCharacterDetail(character) {
         currentUserRole === 'admin'
     );
 
+    // Формируем галерею артов
+    const artsGalleryHTML = renderArtsGallery();
+
     container.innerHTML = `
         <div class="character-detail-card">
             <div class="character-header">
                 <div class="character-portrait">
-                    <img src="${character.avatarUrl}" alt="${character.name}" class="avatar-image">
+                    <img src="${character.avatarUrl}" alt="${character.name}" class="avatar-image" onclick="openGallery(0)">
                 </div>
                 <div class="character-info">
                     <h1>${character.name}</h1>
@@ -95,18 +123,20 @@ function renderCharacterDetail(character) {
                 </div>
                 
                 <div class="character-section">
-                    <h3><i class="fas fa-image"></i> Изображения</h3>
+                    <h3><i class="fas fa-image"></i> Основные изображения</h3>
                     <div class="character-images">
                         <div class="image-item">
                             <h4>Аватарка</h4>
-                            <img src="${character.avatarUrl}" alt="Аватарка ${character.name}" class="detail-image">
+                            <img src="${character.avatarUrl}" alt="Аватарка ${character.name}" class="detail-image" onclick="openGallery(0)">
                         </div>
                         <div class="image-item">
                             <h4>Основной арт</h4>
-                            <img src="${character.artUrl}" alt="Арт ${character.name}" class="detail-image">
+                            <img src="${character.artUrl}" alt="Арт ${character.name}" class="detail-image" onclick="openGallery(1)">
                         </div>
                     </div>
                 </div>
+                
+                ${artsGalleryHTML}
                 
                 ${canEdit ? `
                 <div class="character-actions">
@@ -121,6 +151,292 @@ function renderCharacterDetail(character) {
             </div>
         </div>
     `;
+}
+
+// Рендеринг галереи артов
+function renderArtsGallery() {
+    const currentUser = firebase.auth().currentUser;
+    const canUpload = currentUser && (
+        currentUser.uid === currentCharacter.authorId || 
+        currentUserRole === 'admin'
+    );
+
+    let artsHTML = '';
+    
+    if (characterArts.length > 0) {
+        artsHTML = `
+            <div class="arts-grid">
+                ${characterArts.map((art, index) => `
+                    <div class="art-item" onclick="openGallery(${index + 2})">
+                        <img src="${art.imageUrl}" alt="${art.title}" class="art-image">
+                        <div class="art-info">
+                            <div class="art-title">${art.title}</div>
+                            ${art.description ? `<div class="art-description">${art.description}</div>` : ''}
+                            <div class="art-author">${art.authorEmail}</div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } else {
+        artsHTML = '<p style="text-align: center; color: var(--text-secondary); font-style: italic;">Арты пока не загружены</p>';
+    }
+
+    return `
+        <div class="character-section">
+            <div class="arts-header">
+                <h3><i class="fas fa-images"></i> Галерея артов</h3>
+                ${canUpload ? `
+                    <button class="upload-art-btn" onclick="openUploadModal()">
+                        <i class="fas fa-plus"></i> Добавить арт
+                    </button>
+                ` : ''}
+            </div>
+            <div class="arts-gallery">
+                ${artsHTML}
+            </div>
+        </div>
+    `;
+}
+
+// Открытие модального окна загрузки арта
+function openUploadModal() {
+    document.getElementById('uploadArtModal').style.display = 'block';
+    setupUploadForm();
+}
+
+// Закрытие модального окна загрузки арта
+function closeUploadModal() {
+    document.getElementById('uploadArtModal').style.display = 'none';
+    document.getElementById('uploadArtForm').reset();
+    document.getElementById('artPreview').innerHTML = '';
+}
+
+// Настройка формы загрузки
+function setupUploadForm() {
+    const form = document.getElementById('uploadArtForm');
+    const fileInput = document.getElementById('artFile');
+    const preview = document.getElementById('artPreview');
+
+    // Предварительный просмотр изображения
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Обработка отправки формы
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await uploadArt();
+    });
+}
+
+// Загрузка арта
+async function uploadArt() {
+    const form = document.getElementById('uploadArtForm');
+    const formData = new FormData(form);
+    const title = formData.get('artTitle');
+    const description = formData.get('artDescription');
+    const file = formData.get('artFile');
+
+    if (!file) {
+        alert('Пожалуйста, выберите изображение');
+        return;
+    }
+
+    try {
+        // Показываем индикатор загрузки
+        const submitBtn = form.querySelector('.submit-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Загрузка...';
+        submitBtn.disabled = true;
+
+        // Загружаем изображение на ImgBB
+        const imgbbData = new FormData();
+        imgbbData.append('image', file);
+        
+        const response = await fetch('https://api.imgbb.com/1/upload?key=2e872047678fd602dab294e858608fd4', {
+            method: 'POST',
+            body: imgbbData
+        });
+
+        if (!response.ok) {
+            throw new Error('Ошибка загрузки изображения');
+        }
+
+        const result = await response.json();
+        const imageUrl = result.data.url;
+
+        // Сохраняем информацию об арте в Firestore
+        const currentUser = firebase.auth().currentUser;
+        const artData = {
+            title: title,
+            description: description,
+            imageUrl: imageUrl,
+            authorId: currentUser.uid,
+            authorEmail: currentUser.email,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        };
+
+        await firebase.firestore()
+            .collection('characters')
+            .doc(currentCharacter.id)
+            .collection('arts')
+            .add(artData);
+
+        // Обновляем галерею
+        await loadCharacterArts(currentCharacter.id);
+        renderCharacterDetail(currentCharacter);
+
+        closeUploadModal();
+        alert('Арт успешно загружен!');
+
+    } catch (error) {
+        console.error('Ошибка загрузки арта:', error);
+        alert('Ошибка загрузки арта: ' + error.message);
+    } finally {
+        const submitBtn = form.querySelector('.submit-btn');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    }
+}
+
+// Открытие галереи
+function openGallery(startIndex = 0) {
+    currentImageIndex = startIndex;
+    
+    // Создаем массив всех изображений (аватарка, основной арт + арты)
+    const allImages = [
+        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
+        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
+    ];
+    
+    // Добавляем арты
+    characterArts.forEach(art => {
+        allImages.push({
+            url: art.imageUrl,
+            title: art.title,
+            description: art.description || ''
+        });
+    });
+
+    if (allImages.length === 0) {
+        alert('Нет изображений для просмотра');
+        return;
+    }
+
+    // Показываем галерею
+    document.getElementById('galleryModal').style.display = 'block';
+    updateGalleryView(allImages);
+    renderGalleryThumbnails(allImages);
+}
+
+// Закрытие галереи
+function closeGalleryModal() {
+    document.getElementById('galleryModal').style.display = 'none';
+}
+
+// Обновление основного изображения в галерее
+function updateGalleryView(allImages) {
+    const mainImage = document.getElementById('galleryMainImage');
+    const title = document.getElementById('galleryImageTitle');
+    const description = document.getElementById('galleryImageDescription');
+
+    if (currentImageIndex >= 0 && currentImageIndex < allImages.length) {
+        const image = allImages[currentImageIndex];
+        mainImage.src = image.url;
+        title.textContent = image.title;
+        description.textContent = image.description;
+    }
+
+    // Обновляем состояние кнопок навигации
+    const prevBtn = document.querySelector('.gallery-nav.prev');
+    const nextBtn = document.querySelector('.gallery-nav.next');
+    
+    prevBtn.disabled = currentImageIndex <= 0;
+    nextBtn.disabled = currentImageIndex >= allImages.length - 1;
+}
+
+// Рендеринг миниатюр
+function renderGalleryThumbnails(allImages) {
+    const thumbnailsContainer = document.getElementById('galleryThumbnails');
+    
+    thumbnailsContainer.innerHTML = allImages.map((image, index) => `
+        <img src="${image.url}" 
+             alt="${image.title}" 
+             class="thumbnail ${index === currentImageIndex ? 'active' : ''}"
+             onclick="goToImage(${index})">
+    `).join('');
+}
+
+// Переход к изображению
+function goToImage(index) {
+    currentImageIndex = index;
+    const allImages = [
+        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
+        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
+    ];
+    
+    characterArts.forEach(art => {
+        allImages.push({
+            url: art.imageUrl,
+            title: art.title,
+            description: art.description || ''
+        });
+    });
+
+    updateGalleryView(allImages);
+    renderGalleryThumbnails(allImages);
+}
+
+// Следующее изображение
+function nextImage() {
+    const allImages = [
+        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
+        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
+    ];
+    
+    characterArts.forEach(art => {
+        allImages.push({
+            url: art.imageUrl,
+            title: art.title,
+            description: art.description || ''
+        });
+    });
+
+    if (currentImageIndex < allImages.length - 1) {
+        currentImageIndex++;
+        updateGalleryView(allImages);
+        renderGalleryThumbnails(allImages);
+    }
+}
+
+// Предыдущее изображение
+function previousImage() {
+    const allImages = [
+        { url: currentCharacter.avatarUrl, title: 'Аватарка', description: currentCharacter.name },
+        { url: currentCharacter.artUrl, title: 'Основной арт', description: currentCharacter.name }
+    ];
+    
+    characterArts.forEach(art => {
+        allImages.push({
+            url: art.imageUrl,
+            title: art.title,
+            description: art.description || ''
+        });
+    });
+
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        updateGalleryView(allImages);
+        renderGalleryThumbnails(allImages);
+    }
 }
 
 // Показать ошибку
@@ -174,6 +490,28 @@ window.deleteCharacter = async function(characterId, characterName) {
         alert('Ошибка при удалении персонажа: ' + e.message);
     }
 };
+
+// Глобальные функции для модальных окон
+window.openUploadModal = openUploadModal;
+window.closeUploadModal = closeUploadModal;
+window.openGallery = openGallery;
+window.closeGalleryModal = closeGalleryModal;
+window.nextImage = nextImage;
+window.previousImage = previousImage;
+window.goToImage = goToImage;
+
+// Закрытие модальных окон при клике вне их
+window.onclick = function(event) {
+    const uploadModal = document.getElementById('uploadArtModal');
+    const galleryModal = document.getElementById('galleryModal');
+    
+    if (event.target === uploadModal) {
+        closeUploadModal();
+    }
+    if (event.target === galleryModal) {
+        closeGalleryModal();
+    }
+}
 
 // Инициализация страницы
 document.addEventListener('DOMContentLoaded', async function() {

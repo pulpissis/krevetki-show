@@ -48,6 +48,71 @@
         </div>
     </div>
 
+    <!-- Модальное окно для загрузки артов -->
+    <div id="uploadArtModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-upload"></i> Загрузить новый арт</h2>
+                <span class="close" onclick="closeUploadModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="uploadArtForm">
+                    <div class="form-group">
+                        <label for="artTitle">Название арта:</label>
+                        <input type="text" id="artTitle" name="artTitle" required placeholder="Введите название арта">
+                    </div>
+                    <div class="form-group">
+                        <label for="artDescription">Описание:</label>
+                        <textarea id="artDescription" name="artDescription" placeholder="Описание арта (необязательно)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="artFile">Выберите изображение:</label>
+                        <input type="file" id="artFile" name="artFile" accept="image/*" required>
+                        <div id="artPreview" class="image-preview"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="closeUploadModal()" class="cancel-btn">Отмена</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-upload"></i> Загрузить арт
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для просмотра галереи -->
+    <div id="galleryModal" class="modal gallery-modal">
+        <div class="modal-content gallery-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-images"></i> Галерея артов</h2>
+                <span class="close" onclick="closeGalleryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-container">
+                    <div class="gallery-main">
+                        <button class="gallery-nav prev" onclick="previousImage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="gallery-image-container">
+                            <img id="galleryMainImage" src="" alt="">
+                            <div class="gallery-image-info">
+                                <h3 id="galleryImageTitle"></h3>
+                                <p id="galleryImageDescription"></p>
+                            </div>
+                        </div>
+                        <button class="gallery-nav next" onclick="nextImage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                        <!-- Миниатюры будут добавлены динамически -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         <p>© 2025 Креветки шоу | Создано с любульбульбулью <i class="fas fa-heart"></i></p>
         <div class="social-icons">

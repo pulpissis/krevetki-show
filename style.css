@@ -962,3 +962,486 @@ body::before { display: none !important; }
         z-index: 3;
     }
 }
+
+/* Стили для детальной страницы персонажа */
+.character-detail-container {
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.back-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.back-button:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0, 119, 182, 0.25);
+}
+
+.character-detail {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 30px;
+    box-shadow: var(--shadow);
+    backdrop-filter: blur(10px);
+}
+
+.character-detail-card {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.character-header {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 20px;
+}
+
+.character-portrait {
+    flex-shrink: 0;
+}
+
+.avatar-image {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 3px solid var(--accent);
+}
+
+.character-info h1 {
+    font-size: 2.5em;
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.character-meta {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.character-type, .character-gender {
+    background: var(--accent);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+}
+
+.character-author {
+    color: var(--text-secondary);
+    font-style: italic;
+    font-size: 1.1em;
+}
+
+.character-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.character-section {
+    background: rgba(255, 255, 255, 0.7);
+    padding: 20px;
+    border-radius: var(--radius);
+    border-left: 4px solid var(--accent);
+}
+
+.character-section h3 {
+    color: var(--primary);
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.character-stats {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.character-stats li {
+    padding: 8px 12px;
+    background: rgba(0, 180, 216, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent);
+}
+
+.character-images {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.image-item {
+    text-align: center;
+}
+
+.image-item h4 {
+    color: var(--primary);
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.detail-image {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.detail-image:hover {
+    transform: scale(1.05);
+}
+
+.character-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    padding-top: 20px;
+    border-top: 2px solid var(--accent);
+}
+
+/* Стили для галереи артов */
+.arts-gallery {
+    margin-top: 20px;
+}
+
+.arts-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.arts-title {
+    color: var(--primary);
+    font-size: 1.3em;
+    font-weight: 600;
+}
+
+.upload-art-btn {
+    background: var(--seagrass);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.upload-art-btn:hover {
+    background: var(--coral);
+    transform: translateY(-2px);
+}
+
+.arts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.art-item {
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.art-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 119, 182, 0.2);
+}
+
+.art-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.art-info {
+    padding: 15px;
+}
+
+.art-title {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 5px;
+    font-size: 1em;
+}
+
+.art-description {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.art-author {
+    color: var(--text-secondary);
+    font-size: 0.8em;
+    font-style: italic;
+    margin-top: 8px;
+}
+
+/* Стили для модального окна загрузки артов */
+.image-preview {
+    margin-top: 10px;
+    max-width: 300px;
+}
+
+.image-preview img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    border: 2px solid var(--accent);
+}
+
+/* Стили для галереи просмотра */
+.gallery-modal .modal-content {
+    max-width: 90vw;
+    max-height: 90vh;
+    width: 1200px;
+    height: 800px;
+}
+
+.gallery-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.gallery-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 20px;
+}
+
+.gallery-main {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-height: 400px;
+}
+
+.gallery-nav {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.gallery-nav:hover {
+    background: var(--accent);
+    transform: scale(1.1);
+}
+
+.gallery-nav:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.gallery-image-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    height: 100%;
+}
+
+#galleryMainImage {
+    max-width: 100%;
+    max-height: 400px;
+    object-fit: contain;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.gallery-image-info {
+    text-align: center;
+    max-width: 600px;
+}
+
+.gallery-image-info h3 {
+    color: var(--primary);
+    font-size: 1.3em;
+    margin-bottom: 8px;
+}
+
+.gallery-image-info p {
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+.gallery-thumbnails {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+    max-height: 120px;
+}
+
+.thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.thumbnail:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+.thumbnail.active {
+    border-color: var(--primary);
+    box-shadow: 0 0 10px rgba(0, 119, 182, 0.3);
+}
+
+/* Адаптивность для галереи */
+@media (max-width: 768px) {
+    .character-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .avatar-image {
+        width: 150px;
+        height: 150px;
+    }
+    
+    .character-info h1 {
+        font-size: 2em;
+    }
+    
+    .character-meta {
+        justify-content: center;
+    }
+    
+    .gallery-modal .modal-content {
+        width: 95vw;
+        height: 90vh;
+    }
+    
+    .gallery-main {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .gallery-nav {
+        width: 40px;
+        height: 40px;
+        font-size: 1em;
+    }
+    
+    .gallery-thumbnails {
+        max-height: 100px;
+    }
+    
+    .thumbnail {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .arts-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 15px;
+    }
+}
+
+/* Стили для загрузки */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+.loading i {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: var(--accent);
+}
+
+.error-message {
+    text-align: center;
+    padding: 40px;
+    color: var(--coral);
+}
+
+.error-message i {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 600;
+    margin-top: 20px;
+    transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+    background: var(--accent);
+    transform: translateY(-2px);
+}

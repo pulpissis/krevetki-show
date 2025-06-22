@@ -5,67 +5,65 @@ const searchInput = document.querySelector('.search-input');
 
 function createCharacterCard(character) {
     const card = document.createElement('div');
-    card.className = 'character-card-container';
-
+    card.className = 'character-card';
+    
     // Формируем характеристики
     const skills = [];
-    if (character.height) skills.push(character.height);
-    if (character.age) skills.push(character.age);
-    if (character.romance) skills.push(`романтический интерес <${character.romance}>`);
-
+    if (character.height) skills.push(`<li><strong>Рост:</strong> ${character.height}</li>`);
+    if (character.age) skills.push(`<li><strong>Возраст:</strong> ${character.age}</li>`);
+    if (character.romance) skills.push(`<li><strong>Романтический интерес:</strong> ${character.romance}</li>`);
+    
     // Проверяем права на редактирование/удаление
-    let canEdit = false;
-    if (typeof firebase !== 'undefined') {
-        const currentUser = firebase.auth().currentUser;
-        canEdit = currentUser && (
-            currentUser.uid === character.authorId || 
-            window.currentUserRole === 'admin'
-        );
-    }
-
-    // Транслитерация кириллицы → латиница
-    const filename = character.name
-        .toLowerCase()
-        .replace(/[а-яё]/g, m => {
-            const ru = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
-            const en = 'abvgdeejzijklmnoprstufhzcss_y_eua';
-            return en[ru.indexOf(m)] || '-';
-        });
+    const currentUser = firebase.auth().currentUser;
+    const canEdit = currentUser && (
+        currentUser.uid === character.authorId || 
+        currentUserRole === 'admin'
+    );
 
     card.innerHTML = `
-    <div class="character-card">
-      <div class="card-image-container">
-        <img src="${character.avatarUrl || character.artUrl}" alt="${character.name}" loading="lazy">
-        <span class="character-type">${character.type}</span>
+    <div class="card-image-container">
+      <img src="${character.avatarUrl}" alt="${character.name}">
+      <div class="character-type">${character.type}</div>
+    </div>
+    <div class="card-content">
+      <h3>${character.name}</h3>
+      <p class="character-description">${character.description || '<Описание>'}</p>
+      <div class="character-skills">
+        <h4><i class="fas fa-star"></i> Характеристики:</h4>
+        <ul>
+          ${skills.length > 0 ? skills.map(skill => `<li>${skill}</li>`).join('') : '<li>Характеристики не указаны</li>'}
+        </ul>
       </div>
-      <div class="card-content">
-        <h3>${character.name}</h3>
-        <p class="character-description">${character.description || '<Описание>'}</p>
-        <div class="character-skills">
-          <h4><i class="fas fa-star"></i> Характеристики:</h4>
-          <ul>
-            ${skills.length > 0 ? skills.map(skill => `<li>${skill}</li>`).join('') : '<li>Характеристики не указаны</li>'}
-          </ul>
-        </div>
-        <div class="character-author">
-          <small>Автор: ${character.authorEmail}</small>
-        </div>
-        <div class="card-actions">
-          <a href="character.html?id=${character.id}" class="view-btn">
-            <i class="fas fa-eye"></i> Подробнее
-          </a>
-          ${canEdit ? `
-          <button class="edit-btn" onclick="editCharacter('${character.id}')">
-            <i class="fas fa-edit"></i> Редактировать
-          </button>
-          <button class="delete-btn" onclick="deleteCharacter('${character.id}', '${character.name}')">
-            <i class="fas fa-trash"></i> Удалить
-          </button>
-          ` : ''}
-        </div>
+      <div class="character-author">
+        <small>Автор: ${character.authorEmail}</small>
+      </div>
+      <div class="card-actions">
+        <a href="character.html?id=${character.id}" class="view-btn">
+          <i class="fas fa-eye"></i> Подробнее
+        </a>
+        ${canEdit ? `
+        <button class="edit-btn" onclick="event.stopPropagation(); editCharacter('${character.id}')">
+          <i class="fas fa-edit"></i> Редактировать
+        </button>
+        <button class="delete-btn" onclick="event.stopPropagation(); deleteCharacter('${character.id}', '${character.name}')">
+          <i class="fas fa-trash"></i> Удалить
+        </button>
+        ` : ''}
       </div>
     </div>
   `;
+
+    // Делаем всю карточку кликабельной
+    card.addEventListener('click', function(e) {
+        // Не открываем детальную страницу при клике на кнопки действий
+        if (e.target.closest('.card-actions')) {
+            return;
+        }
+        window.location.href = `character.html?id=${character.id}`;
+    });
+
+    // Добавляем стили для курсора
+    card.style.cursor = 'pointer';
 
     return card;
 }

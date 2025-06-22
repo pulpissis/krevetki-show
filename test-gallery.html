@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест галереи - Креветки шоу</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="waves"></div>
+
+    <!-- Firebase App (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <!-- Firebase Auth (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <!-- Firebase Firestore (compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDs5ojcVcFK6zqiGRukpVHZo4HJ6MnqObg",
+        authDomain: "krevetki-show.firebaseapp.com",
+        projectId: "krevetki-show",
+        storageBucket: "krevetki-show.firebasestorage.app",
+        messagingSenderId: "836884753704",
+        appId: "1:836884753704:web:0c879b2b52e024399e741d"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <header>
+        <h1><i class="fas fa-anchor"></i> Креветки шоу!</h1>
+        <p class="subtitle">Тест галереи артов</p>
+    </header>
+
+    <div class="character-detail-container">
+        <div class="back-button" onclick="window.location.href='index.html'">
+            <i class="fas fa-arrow-left"></i> Назад к галерее
+        </div>
+
+        <div class="character-detail">
+            <div class="character-detail-card">
+                <div class="character-header">
+                    <div class="character-portrait">
+                        <img src="https://via.placeholder.com/200x200/0077b6/ffffff?text=Тест" alt="Тестовый персонаж" class="avatar-image">
+                    </div>
+                    <div class="character-info">
+                        <h1>Тестовый персонаж</h1>
+                        <div class="character-meta">
+                            <span class="character-type">Креветка</span>
+                            <span class="character-gender">Женский</span>
+                        </div>
+                        <p class="character-author">Автор: test@example.com</p>
+                    </div>
+                </div>
+                
+                <div class="character-content">
+                    <div class="character-section">
+                        <h3><i class="fas fa-info-circle"></i> Описание</h3>
+                        <p>Это тестовый персонаж для проверки работы галереи артов.</p>
+                    </div>
+                    
+                    <div class="character-section">
+                        <div class="arts-header">
+                            <h3><i class="fas fa-images"></i> Галерея артов</h3>
+                            <button class="upload-art-btn" onclick="openUploadModal()">
+                                <i class="fas fa-plus"></i> Добавить арт
+                            </button>
+                        </div>
+                        <div class="arts-gallery">
+                            <div class="arts-grid">
+                                <div class="art-item" onclick="openGallery(0)">
+                                    <img src="https://via.placeholder.com/200x150/00b4d8/ffffff?text=Арт+1" alt="Тестовый арт 1" class="art-image">
+                                    <div class="art-info">
+                                        <div class="art-title">Тестовый арт 1</div>
+                                        <div class="art-description">Описание первого арта</div>
+                                        <div class="art-author">test@example.com</div>
+                                    </div>
+                                </div>
+                                <div class="art-item" onclick="openGallery(1)">
+                                    <img src="https://via.placeholder.com/200x150/48CAE4/ffffff?text=Арт+2" alt="Тестовый арт 2" class="art-image">
+                                    <div class="art-info">
+                                        <div class="art-title">Тестовый арт 2</div>
+                                        <div class="art-description">Описание второго арта</div>
+                                        <div class="art-author">test@example.com</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для загрузки артов -->
+    <div id="uploadArtModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-upload"></i> Загрузить новый арт</h2>
+                <span class="close" onclick="closeUploadModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="uploadArtForm">
+                    <div class="form-group">
+                        <label for="artTitle">Название арта:</label>
+                        <input type="text" id="artTitle" name="artTitle" required placeholder="Введите название арта">
+                    </div>
+                    <div class="form-group">
+                        <label for="artDescription">Описание:</label>
+                        <textarea id="artDescription" name="artDescription" placeholder="Описание арта (необязательно)"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="artFile">Выберите изображение:</label>
+                        <input type="file" id="artFile" name="artFile" accept="image/*" required>
+                        <div id="artPreview" class="image-preview"></div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" onclick="closeUploadModal()" class="cancel-btn">Отмена</button>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-upload"></i> Загрузить арт
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно для просмотра галереи -->
+    <div id="galleryModal" class="modal gallery-modal">
+        <div class="modal-content gallery-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-images"></i> Галерея артов</h2>
+                <span class="close" onclick="closeGalleryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="gallery-container">
+                    <div class="gallery-main">
+                        <button class="gallery-nav prev" onclick="previousImage()">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <div class="gallery-image-container">
+                            <img id="galleryMainImage" src="" alt="">
+                            <div class="gallery-image-info">
+                                <h3 id="galleryImageTitle"></h3>
+                                <p id="galleryImageDescription"></p>
+                            </div>
+                        </div>
+                        <button class="gallery-nav next" onclick="nextImage()">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                    <div class="gallery-thumbnails" id="galleryThumbnails">
+                        <!-- Миниатюры будут добавлены динамически -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Тестовые данные
+        const testImages = [
+            { url: 'https://via.placeholder.com/400x300/0077b6/ffffff?text=Аватарка', title: 'Аватарка', description: 'Тестовый персонаж' },
+            { url: 'https://via.placeholder.com/400x300/00b4d8/ffffff?text=Основной+арт', title: 'Основной арт', description: 'Тестовый персонаж' },
+            { url: 'https://via.placeholder.com/400x300/48CAE4/ffffff?text=Арт+1', title: 'Тестовый арт 1', description: 'Описание первого арта' },
+            { url: 'https://via.placeholder.com/400x300/4DB6AC/ffffff?text=Арт+2', title: 'Тестовый арт 2', description: 'Описание второго арта' }
+        ];
+        
+        let currentImageIndex = 0;
+
+        // Функции для модальных окон
+        function openUploadModal() {
+            document.getElementById('uploadArtModal').style.display = 'block';
+            setupUploadForm();
+        }
+
+        function closeUploadModal() {
+            document.getElementById('uploadArtModal').style.display = 'none';
+            document.getElementById('uploadArtForm').reset();
+            document.getElementById('artPreview').innerHTML = '';
+        }
+
+        function setupUploadForm() {
+            const form = document.getElementById('uploadArtForm');
+            const fileInput = document.getElementById('artFile');
+            const preview = document.getElementById('artPreview');
+
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Функция загрузки в тестовом режиме');
+                closeUploadModal();
+            });
+        }
+
+        function openGallery(startIndex = 0) {
+            currentImageIndex = startIndex;
+            document.getElementById('galleryModal').style.display = 'block';
+            updateGalleryView();
+            renderGalleryThumbnails();
+        }
+
+        function closeGalleryModal() {
+            document.getElementById('galleryModal').style.display = 'none';
+        }
+
+        function updateGalleryView() {
+            const mainImage = document.getElementById('galleryMainImage');
+            const title = document.getElementById('galleryImageTitle');
+            const description = document.getElementById('galleryImageDescription');
+
+            if (currentImageIndex >= 0 && currentImageIndex < testImages.length) {
+                const image = testImages[currentImageIndex];
+                mainImage.src = image.url;
+                title.textContent = image.title;
+                description.textContent = image.description;
+            }
+
+            const prevBtn = document.querySelector('.gallery-nav.prev');
+            const nextBtn = document.querySelector('.gallery-nav.next');
+            
+            prevBtn.disabled = currentImageIndex <= 0;
+            nextBtn.disabled = currentImageIndex >= testImages.length - 1;
+        }
+
+        function renderGalleryThumbnails() {
+            const thumbnailsContainer = document.getElementById('galleryThumbnails');
+            
+            thumbnailsContainer.innerHTML = testImages.map((image, index) => `
+                <img src="${image.url}" 
+                     alt="${image.title}" 
+                     class="thumbnail ${index === currentImageIndex ? 'active' : ''}"
+                     onclick="goToImage(${index})">
+            `).join('');
+        }
+
+        function goToImage(index) {
+            currentImageIndex = index;
+            updateGalleryView();
+            renderGalleryThumbnails();
+        }
+
+        function nextImage() {
+            if (currentImageIndex < testImages.length - 1) {
+                currentImageIndex++;
+                updateGalleryView();
+                renderGalleryThumbnails();
+            }
+        }
+
+        function previousImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                updateGalleryView();
+                renderGalleryThumbnails();
+            }
+        }
+
+        // Закрытие модальных окон при клике вне их
+        window.onclick = function(event) {
+            const uploadModal = document.getElementById('uploadArtModal');
+            const galleryModal = document.getElementById('galleryModal');
+            
+            if (event.target === uploadModal) {
+                closeUploadModal();
+            }
+            if (event.target === galleryModal) {
+                closeGalleryModal();
+            }
+        }
+    </script>
+
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+</body>
+</html> 
