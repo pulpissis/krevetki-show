@@ -124,7 +124,7 @@ body::before { display: none !important; }
     margin-bottom: 18px;
 }
 .sea-title {
-    font-family: 'Baloo 2', 'Nunito', 'Poppins', cursive, sans-serif;
+    font-family: 'Pacifico', cursive, sans-serif;
     font-size: 3.2em;
     color: #2E86AB;
     font-weight: 900;
@@ -656,15 +656,15 @@ body::before { display: none !important; }
 
 /* Бургер-меню */
 .burger-menu-btn {
-    position: absolute;
+    position: fixed;
     top: 20px;
     right: 20px;
     background: var(--primary);
     color: white;
     border: none;
     border-radius: 50%;
-        width: 50px;
-        height: 50px;
+    width: 50px;
+    height: 50px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 4px 12px rgba(0, 119, 182, 0.3);
@@ -697,8 +697,8 @@ body::before { display: none !important; }
 }
 
 .burger-menu.show {
-        transform: translateX(0);
-    }
+    transform: translateX(0);
+}
 
 .burger-menu-content {
     padding: 20px;
@@ -956,13 +956,26 @@ body::before { display: none !important; }
     .burger-menu {
         width: 100%;
     }
-
+    
     .modal-content {
         width: 95%;
         padding: 20px;
-        }
-
+    }
+    
     .card-actions {
         flex-direction: column;
+    }
+    
+    .sea-title {
+        font-size: 2.5em;
+        padding: 0.1em 0.3em;
+    }
+    
+    .burger-menu-btn {
+        top: 15px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 1.1em;
     }
 }

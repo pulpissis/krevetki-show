@@ -156,6 +156,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const password2 = document.getElementById('registerPassword2').value;
             const errorEl = document.getElementById('registerError');
             errorEl.textContent = '';
+            
             if (!email || !username || !password || !password2) {
                 errorEl.textContent = 'Заполните все поля!';
                 return;
@@ -164,19 +165,59 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorEl.textContent = 'Пароли не совпадают!';
                 return;
             }
+            if (password.length < 6) {
+                errorEl.textContent = 'Пароль должен содержать минимум 6 символов!';
+                return;
+            }
+            
             try {
+                // Показываем индикатор загрузки
+                registerSubmit.textContent = 'Регистрация...';
+                registerSubmit.disabled = true;
+                
                 const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+                console.log('Пользователь создан:', userCredential.user.uid);
+                
                 // Сохраняем профиль пользователя с ролью 'user' и username в Firestore
                 await firebase.firestore().collection('users').doc(userCredential.user.uid).set({
                     uid: userCredential.user.uid,
                     email: userCredential.user.email,
                     username: username,
-                    role: 'user'
+                    role: 'user',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
+                console.log('Профиль пользователя сохранен в Firestore');
+                
                 registerModal.style.display = 'none';
-                alert('Регистрация успешна!');
+                // Очищаем форму
+                document.getElementById('registerEmail').value = '';
+                document.getElementById('registerUsername').value = '';
+                document.getElementById('registerPassword').value = '';
+                document.getElementById('registerPassword2').value = '';
+                
+                alert('Регистрация успешна! Теперь вы можете войти в аккаунт.');
             } catch (e) {
-                errorEl.textContent = e.message;
+                console.error('Ошибка регистрации:', e);
+                let errorMessage = 'Ошибка регистрации';
+                
+                switch (e.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'Пользователь с таким email уже существует';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Неверный формат email';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Пароль слишком слабый';
+                        break;
+                    default:
+                        errorMessage = e.message;
+                }
+                
+                errorEl.textContent = errorMessage;
+            } finally {
+                registerSubmit.textContent = 'Зарегистрироваться';
+                registerSubmit.disabled = false;
             }
         };
     }
@@ -674,23 +715,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeBurgerMenu = document.getElementById('closeBurgerMenu');
     const burgerUserEmail = document.getElementById('burgerUserEmail');
 
+    console.log('Бургер-меню элементы:', { burgerMenuBtn, burgerMenu, closeBurgerMenu });
+
     if (burgerMenuBtn && burgerMenu && closeBurgerMenu) {
         burgerMenuBtn.onclick = () => {
+            console.log('Клик по бургер-меню');
             const user = firebase.auth().currentUser;
             if (user) {
                 burgerUserEmail.textContent = user.email;
             }
             burgerMenu.classList.add('show');
+            console.log('Класс show добавлен');
         };
         closeBurgerMenu.onclick = () => {
+            console.log('Закрытие бургер-меню');
             burgerMenu.classList.remove('show');
         };
         // Клик вне меню
         window.addEventListener('click', function(event) {
             if (event.target === burgerMenu) {
+                console.log('Клик вне бургер-меню');
                 burgerMenu.classList.remove('show');
             }
         });
+    } else {
+        console.error('Не найдены элементы бургер-меню:', { burgerMenuBtn, burgerMenu, closeBurgerMenu });
     }
 
     // --- Выход через бургер-меню ---
@@ -702,6 +751,38 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Вы вышли из аккаунта');
         };
     }
+
+    // Функция для проверки пользователей (для отладки)
+    window.checkUsers = async function() {
+        if (typeof firebase === 'undefined') {
+            alert('Firebase не загружен');
+            return;
+        }
+        
+        try {
+            const usersSnapshot = await firebase.firestore().collection('users').get();
+            console.log('Всего пользователей:', usersSnapshot.size);
+            
+            let userList = 'Зарегистрированные пользователи:\n\n';
+            usersSnapshot.forEach(doc => {
+                const userData = doc.data();
+                userList += `Email: ${userData.email}\n`;
+                userList += `Username: ${userData.username}\n`;
+                userList += `Role: ${userData.role}\n`;
+                userList += `UID: ${userData.uid}\n`;
+                userList += '---\n';
+            });
+            
+            if (usersSnapshot.size === 0) {
+                userList = 'Пользователей пока нет';
+            }
+            
+            alert(userList);
+        } catch (e) {
+            console.error('Ошибка при получении пользователей:', e);
+            alert('Ошибка при получении пользователей: ' + e.message);
+        }
+    };
 });
 
 // Стилизация выделения для случайного персонажа
