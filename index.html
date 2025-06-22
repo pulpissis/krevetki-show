@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Морская галерея персонажей</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="ocean-sky">
+        <div class="sky-gradient"></div>
+        <div class="sun soft"></div>
+    </div>
+    <header class="sea-header">
+        <h1 class="sea-title">Креветки Шоу</h1>
+        <div class="sea-divider"></div>
+        <div class="sea-subtitle">Пыхнуть не хотите?))</div>
+        
+        <!-- Кнопки авторизации -->
+        <div class="auth-buttons">
+            <button id="loginBtn" class="auth-btn login-btn">
+                <i class="fas fa-sign-in-alt"></i> Войти
+            </button>
+            <button id="registerBtn" class="auth-btn register-btn">
+                <i class="fas fa-user-plus"></i> Регистрация
+            </button>
+        </div>
+        
+        <!-- Информация о пользователе -->
+        <div id="userInfo" class="user-info" style="display: none;">
+            <span id="userEmail" class="user-email"></span>
+            <button id="logoutBtn" class="auth-btn logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Выйти
+            </button>
+            <small style="color: var(--text-secondary); margin-top: 8px; display: block;">
+                <i class="fas fa-bars"></i> Меню в правом верхнем углу
+            </small>
+        </div>
+        
+        <!-- Бургер-меню -->
+        <button id="burgerMenuBtn" class="burger-menu-btn" style="display: none;">
+            <i class="fas fa-bars"></i>
+        </button>
+    </header>
+    
+    <!-- Бургер-меню -->
+    <div id="burgerMenu" class="burger-menu" style="display: none;">
+        <div class="burger-menu-content">
+            <div class="burger-menu-header">
+                <span id="burgerUserEmail" class="burger-user-email"></span>
+                <button id="closeBurgerMenu" class="close-burger-menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="burger-menu-items">
+                <button id="addCharacterBtn" class="burger-menu-item">
+                    <i class="fas fa-plus"></i> Добавить персонажа
+                </button>
+                <button class="burger-menu-item logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Выйти
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="search-panel">
+        <div class="search-row" style="display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; margin-bottom: 18px;">
+            <div class="search-input-wrap" style="flex: 1 1 260px; max-width: 340px;">
+                <span class="search-ico"><i class="fas fa-search"></i></span>
+                <input type="text" class="search-input" placeholder="Поиск по имени">
+            </div>
+            <button class="random-btn">Случайный персонаж</button>
+            <button class="sort-btn"><i class="fas fa-sort-alpha-down"></i> Сортировать по алфавиту</button>
+        </div>
+    </div>
+    <div class="top-waves" style="margin-bottom: 0;"></div>
+    <div class="ocean-water">
+        <div class="bubbles-bg">
+            <div class="bubble-bg"></div><div class="bubble-bg"></div><div class="bubble-bg"></div>
+            <div class="bubble-bg"></div><div class="bubble-bg"></div><div class="bubble-bg"></div>
+            <div class="bubble-bg"></div><div class="bubble-bg"></div><div class="bubble-bg"></div>
+        </div>
+        <div class="gallery-masonry" id="gallery">
+            <!-- Персонажи будут загружаться динамически из Firebase -->
+        </div>
+    </div>
+    <div class="sea-sand">
+        <footer class="sea-footer">
+            <p>© 2025 Креветки Шоу | создано с любульбульбулью <span style="color:#FF7F50;">❤</span></p>
+        </footer>
+    </div>
+    <!-- Firebase и скрипты -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyDs5ojcVcFK6zqiGRukpVHZo4HJ6MnqObg",
+        authDomain: "krevetki-show.firebaseapp.com",
+        projectId: "krevetki-show",
+        storageBucket: "krevetki-show.firebasestorage.app",
+        messagingSenderId: "836884753704",
+        appId: "1:836884753704:web:0c879b2b52e024399e741d"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+    <script src="script.js"></script>
+    <!-- Модалки (оставить как есть) -->
+    <!-- Модальное окно регистрации -->
+    <div id="registerModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" id="closeRegister">&times;</span>
+        <h2>Регистрация</h2>
+        <input type="email" id="registerEmail" placeholder="Email" required>
+        <input type="text" id="registerUsername" placeholder="Имя пользователя" required>
+        <input type="password" id="registerPassword" placeholder="Пароль" required>
+        <input type="password" id="registerPassword2" placeholder="Повторите пароль" required>
+        <button id="registerSubmit">Зарегистрироваться</button>
+        <p id="registerError" style="color:red;"></p>
+      </div>
+    </div>
+
+    <!-- Модальное окно входа -->
+    <div id="loginModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" id="closeLogin">&times;</span>
+        <h2>Вход</h2>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Пароль" required>
+        <button id="loginSubmit">Войти</button>
+        <p id="loginError" style="color:red;"></p>
+      </div>
+    </div>
+
+    <!-- Модальное окно добавления персонажа -->
+    <div id="addCharacterModal" class="modal" style="display:none;">
+      <div class="modal-content">
+        <span class="close" id="closeAddCharacter">&times;</span>
+        <h2>Добавить персонажа</h2>
+        
+        <!-- Основная информация -->
+        <div class="form-section">
+          <h3>Основная информация</h3>
+          <input type="text" id="charName" placeholder="Имя персонажа *" required>
+          <select id="charType" required>
+            <option value="">Выберите тип *</option>
+            <option value="Русалка">Русалка</option>
+            <option value="Русал">Русал</option>
+            <option value="Сирена (ж)">Сирена (ж)</option>
+            <option value="Сирена (м)">Сирена (м)</option>
+            <option value="Человек (пират)">Человек (пират)</option>
+            <option value="Ундина">Ундина</option>
+            <option value="Рыба">Рыба</option>
+            <option value="Другой">Другой</option>
+          </select>
+          <select id="charGender" required>
+            <option value="">Выберите пол *</option>
+            <option value="Женский">Женский</option>
+            <option value="Мужской">Мужской</option>
+            <option value="Небинарный">Небинарный</option>
+          </select>
+        </div>
+
+        <!-- Описание -->
+        <div class="form-section">
+          <h3>Описание (по желанию)</h3>
+          <textarea id="charDescription" placeholder="Описание персонажа, биография, характер..."></textarea>
+        </div>
+
+        <!-- Характеристики -->
+        <div class="form-section">
+          <h3>Характеристики (по желанию)</h3>
+          <input type="text" id="charHeight" placeholder="Рост (например: 3 метра, 175 см)">
+          <input type="text" id="charAge" placeholder="Возраст (например: 20 лет, 25)">
+          <input type="text" id="charRomance" placeholder="Романтический интерес">
+        </div>
+
+        <!-- Изображения -->
+        <div class="form-section">
+          <h3>Изображения</h3>
+          <label for="charAvatar">Аватарка (обязательно) *</label>
+          <input type="file" id="charAvatar" accept="image/*" required>
+          
+          <label for="charArt">Основной арт/референс (обязательно) *</label>
+          <input type="file" id="charArt" accept="image/*" required>
+        </div>
+
+        <button id="addCharacterSubmit">Добавить персонажа</button>
+        <p id="addCharacterError" style="color:red;"></p>
+      </div>
+    </div>
+</body>
+</html>
