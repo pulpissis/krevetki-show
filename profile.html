@@ -327,6 +327,11 @@
         
         <div class="user-characters">
             <h2>Мои персонажи</h2>
+            <div style="text-align: center; margin-bottom: 20px;">
+                <button onclick="refreshCharacters()" style="padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 0.9em;">
+                    <i class="fas fa-sync-alt"></i> Обновить список
+                </button>
+            </div>
             <div id="userCharactersList">
                 <div class="no-characters">
                     <i class="fas fa-fish" style="font-size: 3em; color: var(--accent); margin-bottom: 20px; display: block;"></i>
@@ -442,21 +447,50 @@
         
         // Загружаем персонажей пользователя
         async function loadUserCharacters(userId) {
+            console.log('Загрузка персонажей для пользователя:', userId);
+            
             try {
-                const snapshot = await firebase.firestore()
-                    .collection('characters')
-                    .where('authorId', '==', userId)
-                    .orderBy('createdAt', 'desc')
-                    .get();
+                console.log('Выполняем запрос к Firestore...');
+                
+                // Сначала пробуем с сортировкой
+                let snapshot;
+                try {
+                    snapshot = await firebase.firestore()
+                        .collection('characters')
+                        .where('authorId', '==', userId)
+                        .orderBy('createdAt', 'desc')
+                        .get();
+                } catch (sortError) {
+                    console.log('Ошибка сортировки, пробуем без сортировки:', sortError.message);
+                    // Если сортировка не работает, пробуем без неё
+                    snapshot = await firebase.firestore()
+                        .collection('characters')
+                        .where('authorId', '==', userId)
+                        .get();
+                }
+                
+                console.log('Получен ответ от Firestore, количество документов:', snapshot.size);
                 
                 const characters = [];
                 snapshot.forEach(doc => {
-                    characters.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    console.log('Персонаж:', { id: doc.id, name: data.name, authorId: data.authorId });
+                    characters.push({ id: doc.id, ...data });
                 });
                 
+                // Сортируем вручную по дате создания (если есть)
+                characters.sort((a, b) => {
+                    if (a.createdAt && b.createdAt) {
+                        return b.createdAt.toDate() - a.createdAt.toDate();
+                    }
+                    return 0;
+                });
+                
+                console.log('Всего персонажей пользователя:', characters.length);
                 document.getElementById('charactersCount').textContent = characters.length;
                 
                 if (characters.length === 0) {
+                    console.log('Персонажей не найдено, показываем сообщение');
                     document.getElementById('userCharactersList').innerHTML = `
                         <div class="no-characters">
                             <i class="fas fa-fish" style="font-size: 3em; color: var(--accent); margin-bottom: 20px; display: block;"></i>
@@ -465,11 +499,24 @@
                         </div>
                     `;
                 } else {
+                    console.log('Отображаем персонажей пользователя');
                     renderUserCharacters(characters);
                 }
                 
             } catch (error) {
                 console.error('Ошибка загрузки персонажей:', error);
+                
+                // Показываем ошибку пользователю
+                document.getElementById('userCharactersList').innerHTML = `
+                    <div class="no-characters">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 3em; color: #ff6b6b; margin-bottom: 20px; display: block;"></i>
+                        <p>Ошибка загрузки персонажей</p>
+                        <p>${error.message}</p>
+                        <button onclick="loadUserCharacters('${userId}')" style="padding: 10px 20px; background: var(--primary); color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px;">
+                            Попробовать снова
+                        </button>
+                    </div>
+                `;
             }
         }
         
@@ -644,6 +691,48 @@
                 }
             });
         }
+
+        function refreshCharacters() {
+            loadUserCharacters(firebase.auth().currentUser.uid);
+        }
+        
+        // Функция для отладки - показывает все персонажи в базе
+        async function debugAllCharacters() {
+            try {
+                console.log('Отладка: загружаем всех персонажей...');
+                const snapshot = await firebase.firestore().collection('characters').get();
+                console.log('Всего персонажей в базе:', snapshot.size);
+                
+                const currentUser = firebase.auth().currentUser;
+                console.log('Текущий пользователь:', currentUser.email, 'UID:', currentUser.uid);
+                
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    console.log('Персонаж:', {
+                        id: doc.id,
+                        name: data.name,
+                        authorId: data.authorId,
+                        authorEmail: data.authorEmail,
+                        isMine: data.authorId === currentUser.uid
+                    });
+                });
+                
+                alert(`Отладка завершена!\nВсего персонажей: ${snapshot.size}\nВаш UID: ${currentUser.uid}\nСмотрите консоль для подробностей.`);
+                
+            } catch (error) {
+                console.error('Ошибка отладки:', error);
+                alert('Ошибка отладки: ' + error.message);
+            }
+        }
+        
+        // Добавляем кнопку отладки (временно)
+        document.addEventListener('DOMContentLoaded', function() {
+            const debugBtn = document.createElement('button');
+            debugBtn.textContent = 'Отладка';
+            debugBtn.style.cssText = 'position: fixed; top: 80px; left: 20px; z-index: 10000; background: red; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer;';
+            debugBtn.onclick = debugAllCharacters;
+            document.body.appendChild(debugBtn);
+        });
     </script>
 </body>
 </html> 
