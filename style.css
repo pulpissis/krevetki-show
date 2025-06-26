@@ -1417,7 +1417,7 @@ body::before { display: none !important; }
     transition: width 0.3s ease;
 }
 
-/* НОВАЯ ГАЛЕРЕЯ С НОРМАЛЬНЫМИ РАЗМЕРАМИ */
+/* НОВАЯ ЧИСТАЯ ГАЛЕРЕЯ */
 .gallery-modal {
     position: fixed;
     top: 0;
@@ -1493,42 +1493,13 @@ body::before { display: none !important; }
 }
 
 .gallery-main-image {
-    max-width: 70%;
-    max-height: 50vh;
+    max-width: 450px;
+    max-height: 350px;
     width: auto;
     height: auto;
     object-fit: contain;
     border-radius: 8px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.gallery-delete-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(220, 53, 69, 0.9);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    cursor: pointer;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.gallery-delete-btn:hover {
-    background: rgba(220, 53, 69, 1);
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
-}
-
-.gallery-delete-btn:active {
-    transform: scale(0.95);
 }
 
 .gallery-info {
@@ -1609,8 +1580,8 @@ body::before { display: none !important; }
     }
     
     .gallery-main-image {
-        max-width: 85%;
-        max-height: 40vh;
+        max-width: 300px;
+        max-height: 300px;
     }
     
     .gallery-info {
@@ -2033,4 +2004,49 @@ body::before { display: none !important; }
     .refresh-btn .fas {
         font-size: 0.9em;
     }
+}
+
+/* ПРИНУДИТЕЛЬНЫЕ СТИЛИ ДЛЯ ГАЛЕРЕИ - ПЕРЕКРЫВАЮТ ВСЕ ОСТАЛЬНЫЕ */
+.gallery-main-image {
+    max-width: 200px !important;
+    max-height: 200px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+    .gallery-main-image {
+        max-width: 150px !important;
+        max-height: 150px !important;
+    }
+}
+
+.gallery-delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+}
+
+.gallery-delete-btn:hover {
+    background: rgba(220, 53, 69, 1);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+}
+
+.gallery-delete-btn:active {
+    transform: scale(0.95);
 }

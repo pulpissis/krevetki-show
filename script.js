@@ -406,19 +406,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- Загрузка изображения на ImgBB ---
     async function uploadImageToImgBB(file) {
+        console.log('Начинаем загрузку изображения:', file.name, 'размер:', file.size);
+        
+        // Проверяем размер файла (максимум 32MB для ImgBB)
+        if (file.size > 32 * 1024 * 1024) {
+            throw new Error('Файл слишком большой. Максимальный размер: 32MB');
+        }
+        
         const formData = new FormData();
         formData.append('image', file);
         
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=2e872047678fd602dab294e858608fd4`, {
-            method: 'POST',
-            body: formData
-        });
+        console.log('Отправляем запрос к ImgBB...');
         
-        const data = await response.json();
-        if (data.success) {
-            return data.data.url;
-        } else {
-            throw new Error('Ошибка загрузки изображения');
+        try {
+            // Создаем AbortController для таймаута
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 секунд таймаут
+            
+            const response = await fetch(`https://api.imgbb.com/1/upload?key=2e872047678fd602dab294e858608fd4`, {
+                method: 'POST',
+                body: formData,
+                signal: controller.signal
+            });
+            
+            clearTimeout(timeoutId);
+            console.log('Получен ответ от ImgBB, статус:', response.status);
+            
+            if (!response.ok) {
+                throw new Error(`Ошибка HTTP: ${response.status} ${response.statusText}`);
+            }
+            
+            const data = await response.json();
+            console.log('Ответ ImgBB:', data);
+            
+            if (data.success) {
+                console.log('Изображение успешно загружено:', data.data.url);
+                return data.data.url;
+            } else {
+                console.error('Ошибка ImgBB:', data.error);
+                throw new Error(data.error?.message || 'Ошибка загрузки изображения');
+            }
+        } catch (error) {
+            console.error('Ошибка при загрузке изображения:', error);
+            if (error.name === 'AbortError') {
+                throw new Error('Превышено время ожидания загрузки изображения (30 секунд)');
+            }
+            throw new Error(`Ошибка загрузки изображения: ${error.message}`);
         }
     }
 
@@ -426,7 +459,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const addCharacterSubmit = document.getElementById('addCharacterSubmit');
     if (addCharacterSubmit) {
         addCharacterSubmit.onclick = async function() {
-            if (typeof firebase === 'undefined') return;
+            console.log('Начинаем добавление персонажа...');
+            
+            if (typeof firebase === 'undefined') {
+                console.error('Firebase не загружен');
+                return;
+            }
             
             const errorEl = document.getElementById('addCharacterError');
             errorEl.textContent = '';
@@ -442,6 +480,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const romance = document.getElementById('charRomance').value.trim();
                 const avatarFile = document.getElementById('charAvatar').files[0];
                 const artFile = document.getElementById('charArt').files[0];
+
+                console.log('Данные формы:', { name, type, gender, description, height, age, romance });
+                console.log('Файлы:', { avatarFile: avatarFile?.name, artFile: artFile?.name });
 
                 // Проверяем обязательные поля
                 if (!name || !type || !gender) {
@@ -463,16 +504,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 addCharacterSubmit.textContent = isEditing ? 'Сохранение...' : 'Загрузка...';
                 addCharacterSubmit.disabled = true;
 
+                console.log('Начинаем загрузку изображений...');
+
                 // Загружаем новые изображения, если они выбраны
                 let avatarUrl = null;
                 let artUrl = null;
                 
                 if (avatarFile) {
+                    console.log('Загружаем аватарку...');
                     avatarUrl = await uploadImageToImgBB(avatarFile);
+                    console.log('Аватарка загружена:', avatarUrl);
                 }
                 if (artFile) {
+                    console.log('Загружаем основной арт...');
                     artUrl = await uploadImageToImgBB(artFile);
+                    console.log('Основной арт загружен:', artUrl);
                 }
+
+                console.log('Все изображения загружены, создаем объект персонажа...');
 
                 // Создаем объект персонажа
                 const characterData = {
@@ -492,14 +541,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (avatarUrl) characterData.avatarUrl = avatarUrl;
                 if (artUrl) characterData.artUrl = artUrl;
 
+                console.log('Объект персонажа создан:', characterData);
+
                 if (isEditing) {
                     // Обновляем существующего персонажа
+                    console.log('Обновляем существующего персонажа...');
                     await firebase.firestore().collection('characters').doc(characterId).update(characterData);
+                    console.log('Персонаж обновлен');
                     alert('Персонаж успешно обновлен!');
                 } else {
                     // Добавляем нового персонажа
+                    console.log('Добавляем нового персонажа в Firestore...');
                     characterData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await firebase.firestore().collection('characters').add(characterData);
+                    console.log('Персонаж добавлен в Firestore');
                     alert('Персонаж успешно добавлен!');
                 }
 
@@ -512,10 +567,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 document.querySelector('#addCharacterModal h2').textContent = 'Добавить персонажа';
                 addCharacterSubmit.textContent = 'Добавить персонажа';
                 
+                console.log('Обновляем галерею...');
                 // Обновляем галерею
                 loadCharacters();
 
             } catch (e) {
+                console.error('Ошибка при добавлении персонажа:', e);
                 errorEl.textContent = e.message;
             } finally {
                 addCharacterSubmit.textContent = 'Добавить персонажа';
